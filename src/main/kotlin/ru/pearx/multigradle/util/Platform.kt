@@ -90,8 +90,8 @@ enum class Platform(val codeName: String)
 
                     create<Sync>("syncNodeModules") {
                         dependsOn("compileKotlin2Js", "compileTestKotlin2Js")
+                        from(this@with.the<SourceSetContainer>()["main"].output)
                         doFirst {
-                            from(the<SourceSetContainer>()["main"].output)
                             configurations["testCompile"].forEach { from(zipTree(it)) }
                         }
                         include { it.path.endsWith(".js", true) }
@@ -106,14 +106,12 @@ enum class Platform(val codeName: String)
                         dependsOn("installMocha", "syncNodeModules", "compileTestKotlin2Js")
                         onlyIf {
                             val path = getByName<Kotlin2JsCompile>("compileTestKotlin2Js").destinationDir.toPath()
-                            if(Files.exists(path))
+                            if (Files.exists(path))
                                 Files.newDirectoryStream(path).use { f -> f.iterator().hasNext() }
                             else
                                 false
                         }
-                        doFirst {
-                            setScript(file("$rootDir/.gradle/node/node_modules/mocha/bin/mocha"))
-                        }
+                        setScript(file("$rootDir/.gradle/node/node_modules/mocha/bin/mocha"))
                         setArgs(listOf(getByName<Kotlin2JsCompile>("compileTestKotlin2Js").destinationDir))
                     }
                     named<Test>("test") {
