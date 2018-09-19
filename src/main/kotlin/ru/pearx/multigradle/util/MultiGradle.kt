@@ -8,7 +8,6 @@
 package ru.pearx.multigradle.util
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.the
 
 const val MULTIGRADLE_EXTENSION_NAME = "multigradle"
 

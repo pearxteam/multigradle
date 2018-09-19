@@ -178,6 +178,7 @@ enum class Platform(val codeName: String)
             configure<BasePluginConvention> {
                 //carbidelin-core-jvm
                 archivesBaseName = "${root.name}-${module.name}-$codeName"
+                version = extension.projectVersion
             }
         }
     }

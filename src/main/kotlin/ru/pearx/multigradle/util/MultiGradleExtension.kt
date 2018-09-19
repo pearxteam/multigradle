@@ -23,12 +23,14 @@ import kotlin.reflect.jvm.isAccessible
  */
 class MultiGradleExtension
 {
+    lateinit var projectVersion: String
     lateinit var nodejsVersion: String
     lateinit var npmVersion: String
     lateinit var mochaVersion: String
     lateinit var junitJupiterVersion: String
     lateinit var jacocoVersion: String
     lateinit var javaVersion: String
+
     val javaVersionFull
         get() = "1.$javaVersion"
 
