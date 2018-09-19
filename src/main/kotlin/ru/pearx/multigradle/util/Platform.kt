@@ -134,7 +134,7 @@ enum class Platform(val codeName: String)
                 apply(plugin = "jacoco")
 
                 configure<JavaPluginConvention> {
-                    sourceCompatibility = JavaVersion.values().first { name == extension.javaVersionFull }
+                    sourceCompatibility = JavaVersion.values().first { it.name == extension.javaVersionFull }
                 }
 
                 configure<JacocoPluginExtension> {
