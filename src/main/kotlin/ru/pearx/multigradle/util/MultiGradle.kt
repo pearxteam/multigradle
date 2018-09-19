@@ -12,9 +12,6 @@ import org.gradle.kotlin.dsl.the
 
 const val MULTIGRADLE_EXTENSION_NAME = "multigradle"
 
-val Project.multigradle: MultiGradleExtension
-    get() = the()
-
 fun Project.multiplatformDependencies(init: MultiplatformDependenciesScope.() -> Unit) =
         MultiplatformDependenciesScope(this).apply { init() }
 
