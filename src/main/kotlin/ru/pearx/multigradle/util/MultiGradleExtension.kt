@@ -8,10 +8,6 @@
 package ru.pearx.multigradle.util
 
 import org.gradle.api.Project
-import org.gradle.api.initialization.Settings
-import java.io.File
-import java.io.FileReader
-import java.util.*
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.memberProperties
