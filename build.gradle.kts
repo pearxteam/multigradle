@@ -19,37 +19,21 @@ gradlePlugin {
     plugins {
         val multigradleVersion: String by project
 
-        create("multigradle-modular-settings") {
-            id = "ru.pearx.multigradle.modular.settings"
-            displayName = "MultiGradle Modular [Settings]"
-            description = "A plugin that simplifies the creation of modular multiplatform Kotlin projects."
-            version = multigradleVersion
-            implementationClass = "ru.pearx.multigradle.plugin.modular.MultiGradleModularSettings"
+        fun createMultiGradlePlugin(type: String, applicableTo: String)
+        {
+            create("multigradle-$type-$applicableTo") {
+                id = "ru.pearx.multigradle.$type.$applicableTo"
+                version = multigradleVersion
+                displayName = "MultiGradle ${type.capitalize()} [${applicableTo.capitalize()}]"
+                description = "A plugin that simplifies the creation of $type multiplatform Kotlin projects."
+                implementationClass = "ru.pearx.multigradle.plugin.$type.MultiGradle${type.capitalize()}${applicableTo.capitalize()}"
+            }
         }
 
-        create("multigradle-modular-project") {
-            id = "ru.pearx.multigradle.modular.project"
-            displayName = "MultiGradle Modular [Project]"
-            description = "A plugin that simplifies the creation of modular multiplatform Kotlin projects."
-            version = multigradleVersion
-            implementationClass = "ru.pearx.multigradle.plugin.modular.MultiGradleModularProject"
-        }
-
-        create("multigradle-simple-settings") {
-            id = "ru.pearx.multigradle.simple.settings"
-            displayName = "MultiGradle Simple [Settings]"
-            description = "A plugin that simplifies the creation of multiplatform Kotlin projects."
-            version = multigradleVersion
-            implementationClass = "ru.pearx.multigradle.plugin.simple.MultiGradleSimpleSettings"
-        }
-
-        create("multigradle-simple-project") {
-            id = "ru.pearx.multigradle.simple.project"
-            displayName = "MultiGradle Simple [Project]"
-            description = "A plugin that simplifies the creation of multiplatform Kotlin projects."
-            version = multigradleVersion
-            implementationClass = "ru.pearx.multigradle.plugin.simple.MultiGradleSimpleProject"
-        }
+        createMultiGradlePlugin("modular", "settings")
+        createMultiGradlePlugin("modular", "project")
+        createMultiGradlePlugin("simple", "settings")
+        createMultiGradlePlugin("simple", "project")
     }
 }
 
@@ -57,4 +41,8 @@ pluginBundle {
     website = "https://github.com/pearxteam/multigradle"
     vcsUrl = "https://github.com/pearxteam/multigradle"
     tags = listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform")
+    mavenCoordinates {
+        groupId = "ru.pearx.multigradle"
+        artifactId = "gradle-multigradle-plugin"
+    }
 }
