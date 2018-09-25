@@ -7,12 +7,9 @@
 
 package ru.pearx.multigradle.plugin.modular
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.the
 import ru.pearx.multigradle.plugin.MultiGradleProject
-import ru.pearx.multigradle.util.MULTIGRADLE_EXTENSION_NAME
-import ru.pearx.multigradle.util.MultiGradleExtension
 import ru.pearx.multigradle.util.Platform
 
 /*

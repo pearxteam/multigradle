@@ -10,8 +10,6 @@ package ru.pearx.multigradle.util
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.kotlin.dsl.DependencyHandlerScope
 
 const val MULTIGRADLE_EXTENSION_NAME = "multigradle"
 
