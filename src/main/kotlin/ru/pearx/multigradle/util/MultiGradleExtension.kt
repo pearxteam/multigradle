@@ -26,6 +26,9 @@ class MultiGradleExtension
     lateinit var junitJupiterVersion: String
     lateinit var jacocoVersion: String
     lateinit var javaVersion: String
+    var kotlinDevRepo = true
+    var kotlinExperimentalFeatures = listOf<String>()
+
 
     val javaVersionFull
         get() = "1.$javaVersion"
@@ -38,7 +41,7 @@ class MultiGradleExtension
         {
             for (property in classProps)
             {
-                if (property.name == key && property is KMutableProperty<*> && property.returnType == stringType)
+                if (property.isLateinit && property.name == key && property is KMutableProperty<*> && property.returnType == stringType)
                 {
                     property.isAccessible = true
                     @Suppress("UNCHECKED_CAST")

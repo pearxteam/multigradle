@@ -7,23 +7,30 @@
 
 package ru.pearx.multigradle.plugin.simple
 
+import org.gradle.api.Plugin
 import org.gradle.api.Project
-import ru.pearx.multigradle.plugin.common.CommonProjectPlugin
-import ru.pearx.multigradle.util.Platform
+import org.gradle.kotlin.dsl.the
+import ru.pearx.multigradle.plugin.MultiGradleProject
+import ru.pearx.multigradle.util.MULTIGRADLE_EXTENSION_NAME
 import ru.pearx.multigradle.util.MultiGradleExtension
+import ru.pearx.multigradle.util.Platform
 
 
 /*
  * Created by mrAppleXZ on 06.09.18.
  */
-class SimpleProjectPlugin : CommonProjectPlugin()
+class MultiGradleSimpleProject : MultiGradleProject()
 {
-    override fun apply(target: Project, extension: MultiGradleExtension)
+    override fun apply(target: Project)
     {
+        super.apply(target)
         with(target) {
             for (platform in subprojects)
             {
-                Platform.valueOfCodeName(platform.name).applyProject(platform, this, this, extension)
+                platform.beforeEvaluate {
+                    val root = parent!!
+                    Platform.valueOfCodeName(name).apply(this, root, root, root.the())
+                }
             }
         }
     }

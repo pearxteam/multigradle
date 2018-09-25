@@ -16,7 +16,7 @@ import java.nio.file.Files
 /*
  * Created by mrAppleXZ on 31.08.18.
  */
-class ModularSettingsPlugin : Plugin<Settings>
+class MultiGradleModularSettings : Plugin<Settings>
 {
     override fun apply(target: Settings)
     {

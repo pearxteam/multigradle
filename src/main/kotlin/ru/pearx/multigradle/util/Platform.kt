@@ -21,6 +21,7 @@ import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformCommonPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJsPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
@@ -37,9 +38,9 @@ enum class Platform(val codeName: String)
     //todo Native support
     COMMON("common")
     {
-        override fun applyProject(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+        override fun apply(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
         {
-            super.applyProject(platform, module, root, extension)
+            super.apply(platform, module, root, extension)
 
             with(platform) {
                 apply<KotlinPlatformCommonPlugin>()
@@ -55,9 +56,9 @@ enum class Platform(val codeName: String)
     },
     JS("js")
     {
-        override fun applyProject(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+        override fun apply(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
         {
-            super.applyProject(platform, module, root, extension)
+            super.apply(platform, module, root, extension)
 
             with(platform) {
                 apply<KotlinPlatformJsPlugin>()
@@ -123,9 +124,9 @@ enum class Platform(val codeName: String)
     },
     JVM("jvm")
     {
-        override fun applyProject(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+        override fun apply(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
         {
-            super.applyProject(platform, module, root, extension)
+            super.apply(platform, module, root, extension)
 
             with(platform) {
                 apply<KotlinPlatformJvmPlugin>()
@@ -153,7 +154,6 @@ enum class Platform(val codeName: String)
                 tasks {
                     withType<KotlinCompile> {
                         kotlinOptions.jvmTarget = extension.javaVersionFull
-                        kotlinOptions.freeCompilerArgs = listOf("-Xno-param-assertions")
                     }
                     named<Test>("test") {
                         useJUnitPlatform()
@@ -163,20 +163,33 @@ enum class Platform(val codeName: String)
         }
     };
 
-    open fun applyProject(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+    open fun apply(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
     {
         with(platform) {
             apply<BasePlugin>()
 
             repositories {
                 jcenter()
-                maven { url = uri("https://dl.bintray.com/kotlin/kotlin-dev/") }
+                if(extension.kotlinDevRepo)
+                    maven { url = uri("https://dl.bintray.com/kotlin/kotlin-dev/") }
             }
 
             configure<BasePluginConvention> {
                 //carbidelin-core-jvm
                 archivesBaseName = "${root.name}-${module.name}-$codeName"
                 version = extension.projectVersion
+            }
+
+            tasks {
+                withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<KotlinCommonOptions>> {
+                    if(!extension.kotlinExperimentalFeatures.isEmpty())
+                    {
+                        kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs.toMutableList().apply {
+                            for(feature in extension.kotlinExperimentalFeatures)
+                                add("-Xuse-experimental=$feature")
+                        }
+                    }
+                }
             }
         }
     }

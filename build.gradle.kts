@@ -7,9 +7,6 @@ plugins {
 repositories {
     jcenter()
     gradlePluginPortal()
-    maven {
-        url = uri("https://repo.gradle.org/gradle/libs-releases-local/")
-    }
 }
 
 dependencies {
@@ -27,7 +24,7 @@ gradlePlugin {
             displayName = "MultiGradle Modular [Settings]"
             description = "A plugin that simplifies the creation of modular multiplatform Kotlin projects."
             version = multigradleVersion
-            implementationClass = "ru.pearx.multigradle.plugin.modular.ModularSettingsPlugin"
+            implementationClass = "ru.pearx.multigradle.plugin.modular.MultiGradleModularSettings"
         }
 
         create("multigradle-modular-project") {
@@ -35,7 +32,7 @@ gradlePlugin {
             displayName = "MultiGradle Modular [Project]"
             description = "A plugin that simplifies the creation of modular multiplatform Kotlin projects."
             version = multigradleVersion
-            implementationClass = "ru.pearx.multigradle.plugin.modular.ModularProjectPlugin"
+            implementationClass = "ru.pearx.multigradle.plugin.modular.MultiGradleModularProject"
         }
 
         create("multigradle-simple-settings") {
@@ -43,7 +40,7 @@ gradlePlugin {
             displayName = "MultiGradle Simple [Settings]"
             description = "A plugin that simplifies the creation of multiplatform Kotlin projects."
             version = multigradleVersion
-            implementationClass = "ru.pearx.multigradle.plugin.modular.ModularSettingsPlugin"
+            implementationClass = "ru.pearx.multigradle.plugin.simple.MultiGradleSimpleSettings"
         }
 
         create("multigradle-simple-project") {
@@ -51,7 +48,7 @@ gradlePlugin {
             displayName = "MultiGradle Simple [Project]"
             description = "A plugin that simplifies the creation of multiplatform Kotlin projects."
             version = multigradleVersion
-            implementationClass = "ru.pearx.multigradle.plugin.modular.ModularProjectPlugin"
+            implementationClass = "ru.pearx.multigradle.plugin.simple.MultiGradleSimpleProject"
         }
     }
 }

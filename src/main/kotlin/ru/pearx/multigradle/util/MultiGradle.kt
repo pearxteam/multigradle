@@ -8,35 +8,29 @@
 package ru.pearx.multigradle.util
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.kotlin.dsl.DependencyHandlerScope
 
 const val MULTIGRADLE_EXTENSION_NAME = "multigradle"
 
-fun Project.multiplatformDependencies(init: MultiplatformDependenciesScope.() -> Unit) =
-        MultiplatformDependenciesScope(this).apply { init() }
-
-class MultiplatformDependenciesScope(private val project: Project)
+fun Project.subplatforms(init: Project.(platform: Platform) -> Unit)
 {
-    operator fun String.invoke(projectDependency: Project)
-    {
-        with(project) {
-            for (platform in Platform.values())
-            {
-                project(platform.codeName).dependencies.add(this@invoke, projectDependency.project(platform.codeName))
-            }
-        }
-    }
-
-    operator fun String.invoke(notation: String, versionProperty: String, unnamedPlatform: Platform?)
-    {
-        with(project) {
-            for (platform in Platform.values())
-            {
-                with(project(platform.codeName).dependencies) {
-                    //todo Do the name swapping using mutable dependencies (if they exist at all, of course)?
-                    val dep = create(notation)
-                    add(this@invoke, "${dep.group}:${dep.name}${if (platform == unnamedPlatform) "" else "-${platform.codeName}"}:${properties[versionProperty]}")
-                }
-            }
+    subprojects {
+        beforeEvaluate {
+            init(Platform.valueOfCodeName(name))
         }
     }
 }
+
+fun Project.mpdep(notation: String, unnamedPlatform: Platform?): Dependency
+{
+    val dep = dependencies.create(notation)
+    val platform = Platform.valueOfCodeName(name)
+    return dependencies.create(mapOf("group" to dep.group, "name" to (dep.name + if (platform == unnamedPlatform) "" else "-${platform.codeName}"), "version" to dep.version))
+}
+
+fun Project.mpdep(module: ProjectDependency): Project = mpdep(module.dependencyProject)
+
+fun Project.mpdep(module: Project): Project = module.project(name)

@@ -15,7 +15,7 @@ import ru.pearx.multigradle.util.Platform
 /*
  * Created by mrAppleXZ on 06.09.18.
  */
-class SimpleSettingsPlugin : Plugin<Settings>
+class MultiGradleSimpleSettings : Plugin<Settings>
 {
     override fun apply(target: Settings)
     {
