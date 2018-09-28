@@ -9,7 +9,7 @@ package ru.pearx.multigradle.plugin.modular
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
-import ru.pearx.multigradle.util.Platform
+import ru.pearx.multigradle.util.platform.Platform
 import java.io.File
 import java.nio.file.Files
 

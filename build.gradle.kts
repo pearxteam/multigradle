@@ -4,6 +4,9 @@ plugins {
     `kotlin-dsl`
 }
 
+group = "ru.pearx.multigradle"
+version = properties["multigradleVersion"]!!
+
 repositories {
     jcenter()
     gradlePluginPortal()
@@ -17,13 +20,10 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        val multigradleVersion: String by project
-
         fun createMultiGradlePlugin(type: String, applicableTo: String)
         {
             create("multigradle-$type-$applicableTo") {
                 id = "ru.pearx.multigradle.$type.$applicableTo"
-                version = multigradleVersion
                 displayName = "MultiGradle ${type.capitalize()} [${applicableTo.capitalize()}]"
                 description = "A plugin that simplifies the creation of $type multiplatform Kotlin projects."
                 implementationClass = "ru.pearx.multigradle.plugin.$type.MultiGradle${type.capitalize()}${applicableTo.capitalize()}"
@@ -42,7 +42,7 @@ pluginBundle {
     vcsUrl = "https://github.com/pearxteam/multigradle"
     tags = listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform")
     mavenCoordinates {
-        groupId = "ru.pearx.multigradle"
         artifactId = "gradle-multigradle-plugin"
+        groupId = "ru.pearx.multigradle"
     }
 }

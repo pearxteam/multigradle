@@ -5,7 +5,7 @@
  *  You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package ru.pearx.multigradle.util
+package ru.pearx.multigradle.util.platform
 
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
@@ -13,6 +13,8 @@ import com.moowork.gradle.node.npm.NpmTask
 import com.moowork.gradle.node.task.NodeTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.internal.AbstractTask
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.plugins.JavaPluginConvention
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJsPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import ru.pearx.multigradle.util.MultiGradleExtension
 import java.nio.file.Files
 
 
@@ -38,13 +41,20 @@ enum class Platform(val codeName: String)
     //todo Native support
     COMMON("common")
     {
-        override fun apply(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+        override fun configureBefore(platform: Project, module: Project, root: Project)
         {
-            super.apply(platform, module, root, extension)
+            super.configureBefore(platform, module, root)
 
             with(platform) {
                 apply<KotlinPlatformCommonPlugin>()
+            }
+        }
 
+        override fun configureAfter(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+        {
+            super.configureAfter(platform, module, root, extension)
+
+            with(platform) {
                 dependencies {
                     "compile"(kotlin("stdlib-common"))
 
@@ -56,14 +66,21 @@ enum class Platform(val codeName: String)
     },
     JS("js")
     {
-        override fun apply(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+        override fun configureBefore(platform: Project, module: Project, root: Project)
         {
-            super.apply(platform, module, root, extension)
+            super.configureBefore(platform, module, root)
 
             with(platform) {
                 apply<KotlinPlatformJsPlugin>()
                 apply<NodePlugin>()
+            }
+        }
 
+        override fun configureAfter(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+        {
+            super.configureAfter(platform, module, root, extension)
+
+            with(platform) {
                 configure<NodeExtension> {
                     version = extension.nodejsVersion
                     npmVersion = extension.npmVersion
@@ -99,24 +116,33 @@ enum class Platform(val codeName: String)
                         into("$buildDir/node_modules")
                     }
 
-                    create<NpmTask>("installMocha") {
-                        setArgs(listOf("install", "mocha@${extension.mochaVersion}"))
+                    create<NpmTask>("installModules") {
+                        var lst = mutableListOf("install", "mocha@${extension.mochaVersion}")
+                        for(nm in extension.nodeModules)
+                            lst.add(nm.toString())
+                        setArgs(lst)
                     }
 
                     create<NodeTask>("runMocha") {
-                        dependsOn("installMocha", "syncNodeModules", "compileTestKotlin2Js")
-                        onlyIf {
+                        onlyIf
+                        dependsOn("installModules", "syncNodeModules", "compileTestKotlin2Js")
+                        setScript(file("$rootDir/.gradle/node/node_modules/mocha/bin/mocha"))
+                        setArgs(listOf(getByName<Kotlin2JsCompile>("compileTestKotlin2Js").destinationDir))
+                    }
+
+                    named<Test>("test") {
+                        dependsOn("runMocha")
+                    }
+
+                    for(dep in listOf("runMocha", "npmSetup", "nodeSetup", "installModules", "syncNodeModules"))
+                    {
+                        getByName<Task>(dep).onlyIf {
                             val path = getByName<Kotlin2JsCompile>("compileTestKotlin2Js").destinationDir.toPath()
                             if (Files.exists(path))
                                 Files.newDirectoryStream(path).use { f -> f.iterator().hasNext() }
                             else
                                 false
                         }
-                        setScript(file("$rootDir/.gradle/node/node_modules/mocha/bin/mocha"))
-                        setArgs(listOf(getByName<Kotlin2JsCompile>("compileTestKotlin2Js").destinationDir))
-                    }
-                    named<Test>("test") {
-                        dependsOn("runMocha")
                     }
                 }
             }
@@ -124,14 +150,21 @@ enum class Platform(val codeName: String)
     },
     JVM("jvm")
     {
-        override fun apply(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+        override fun configureBefore(platform: Project, module: Project, root: Project)
         {
-            super.apply(platform, module, root, extension)
+            super.configureBefore(platform, module, root)
 
             with(platform) {
                 apply<KotlinPlatformJvmPlugin>()
                 apply(plugin = "jacoco")
+            }
+        }
 
+        override fun configureAfter(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+        {
+            super.configureAfter(platform, module, root, extension)
+
+            with(platform) {
                 configure<JavaPluginConvention> {
                     sourceCompatibility = JavaVersion.values().first { it.toString() == extension.javaVersionFull }
                 }
@@ -163,14 +196,27 @@ enum class Platform(val codeName: String)
         }
     };
 
-    open fun apply(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+    fun apply(platform: Project, module: Project, root: Project)
+    {
+        configureBefore(platform, module, root)
+        platform.afterEvaluate {
+            configureAfter(platform, module, root, the())
+        }
+    }
+
+    open fun configureBefore(platform: Project, module: Project, root: Project)
     {
         with(platform) {
             apply<BasePlugin>()
+        }
+    }
 
+    open fun configureAfter(platform: Project, module: Project, root: Project, extension: MultiGradleExtension)
+    {
+        with(platform) {
             repositories {
                 jcenter()
-                if(extension.kotlinDevRepo)
+                if (extension.kotlinDevRepo)
                     maven { url = uri("https://dl.bintray.com/kotlin/kotlin-dev/") }
             }
 
@@ -182,10 +228,10 @@ enum class Platform(val codeName: String)
 
             tasks {
                 withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<KotlinCommonOptions>> {
-                    if(!extension.kotlinExperimentalFeatures.isEmpty())
+                    if (!extension.kotlinExperimentalFeatures.isEmpty())
                     {
                         kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs.toMutableList().apply {
-                            for(feature in extension.kotlinExperimentalFeatures)
+                            for (feature in extension.kotlinExperimentalFeatures)
                                 add("-Xuse-experimental=$feature")
                         }
                     }

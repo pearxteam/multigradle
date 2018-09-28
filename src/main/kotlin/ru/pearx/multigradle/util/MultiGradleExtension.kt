@@ -27,21 +27,20 @@ class MultiGradleExtension
     lateinit var jacocoVersion: String
     lateinit var javaVersion: String
     var kotlinDevRepo = true
-    var kotlinExperimentalFeatures = listOf<String>()
-
+    var kotlinExperimentalFeatures = mutableListOf<String>()
+    var nodeModules = mutableListOf<NodeModule>()
 
     val javaVersionFull
         get() = "1.$javaVersion"
 
     fun load(project: Project): MultiGradleExtension
     {
-        val classProps = this::class.memberProperties
         val stringType = String::class.createType()
-        for ((key, value) in project.properties)
+        for (property in this::class.memberProperties)
         {
-            for (property in classProps)
+            for ((key, value) in project.properties)
             {
-                if (property.isLateinit && property.name == key && property is KMutableProperty<*> && property.returnType == stringType)
+                if (property.name == key && property.isLateinit && property is KMutableProperty<*> && property.returnType == stringType)
                 {
                     property.isAccessible = true
                     @Suppress("UNCHECKED_CAST")
