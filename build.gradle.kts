@@ -1,7 +1,8 @@
 plugins {
-    id("com.gradle.plugin-publish")
     `java-gradle-plugin`
     `kotlin-dsl`
+    `maven-publish`
+    id("com.gradle.plugin-publish")
 }
 
 group = "ru.pearx.multigradle"
@@ -13,7 +14,6 @@ repositories {
 }
 
 dependencies {
-    "compile"(gradleApi())
     "compile"("org.jetbrains.kotlin:kotlin-gradle-plugin:${properties["kotlinVersion"]}")
     "compile"("com.moowork.node:com.moowork.node.gradle.plugin:${properties["nodeVersion"]}")
 }
@@ -42,7 +42,6 @@ pluginBundle {
     vcsUrl = "https://github.com/pearxteam/multigradle"
     tags = listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform")
     mavenCoordinates {
-        artifactId = "gradle-multigradle-plugin"
         groupId = "ru.pearx.multigradle"
     }
 }
