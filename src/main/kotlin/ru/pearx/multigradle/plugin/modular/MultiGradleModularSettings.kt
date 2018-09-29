@@ -1,15 +1,16 @@
 /*
- *  Copyright © 2018 mrAppleXZ
- *  This Source Code Form is subject to the terms of the Mozilla Public
- *  License, v. 2.0. If a copy of the MPL was not distributed with this file,
- *  You can obtain one at https://mozilla.org/MPL/2.0/.
+ * Copyright © 2018 mrAppleXZ
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
 package ru.pearx.multigradle.plugin.modular
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
-import ru.pearx.multigradle.util.platform.Platform
+import ru.pearx.multigradle.util.PLATFORMS
+import ru.pearx.multigradle.util.Platform
 import java.io.File
 import java.nio.file.Files
 
@@ -26,9 +27,9 @@ class MultiGradleModularSettings : Plugin<Settings>
             {
                 if(Files.isDirectory(subPath))
                 {
-                    for(platform in Platform.values())
+                    for(platform in PLATFORMS)
                     {
-                        include(root.relativize(subPath.resolve(platform.codeName)).toString().replace(File.separatorChar, ':'))
+                        include(root.relativize(subPath.resolve(platform.name)).toString().replace(File.separatorChar, ':'))
                     }
                 }
             }

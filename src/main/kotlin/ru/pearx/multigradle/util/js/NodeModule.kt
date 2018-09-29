@@ -5,6 +5,9 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package ru.pearx.multigradle.util
+package ru.pearx.multigradle.util.js
 
-const val MULTIGRADLE_EXTENSION_NAME = "multigradle"
+data class NodeModule(val name: String, val version: String)
+{
+    override fun toString(): String = "$name@$version"
+}
