@@ -38,8 +38,6 @@ interface Platform<T : MultiGradleExtension>
                 val extension = getExtension()
                 repositories {
                     jcenter()
-                    if (extension.kotlinDevRepo)
-                        maven { url = uri("https://dl.bintray.com/kotlin/kotlin-dev/") }
                 }
 
                 configure<BasePluginConvention> {

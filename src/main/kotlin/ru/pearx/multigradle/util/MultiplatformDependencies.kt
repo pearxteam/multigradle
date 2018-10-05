@@ -5,13 +5,11 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package ru.pearx.multigradle.util.extensions
+package ru.pearx.multigradle.util
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import ru.pearx.multigradle.util.Platform
-import ru.pearx.multigradle.util.platformOf
 
 fun Project.mpdep(notation: String, unnamedPlatform: Platform<*>?): Dependency
 {

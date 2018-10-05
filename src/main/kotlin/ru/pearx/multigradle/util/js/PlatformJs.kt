@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJsPlugin
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import ru.pearx.multigradle.util.PLATFORM_COMMON
 import ru.pearx.multigradle.util.Platform
+import java.io.File
 import java.nio.file.Files
 
 class PlatformJs : Platform<MultiGradleJsExtension>
@@ -41,7 +42,7 @@ class PlatformJs : Platform<MultiGradleJsExtension>
     override fun Project.configureAfter(module: Project, root: Project, extension: MultiGradleJsExtension)
     {
         configure<NodeExtension> {
-            version = extension.nodejsVersion
+            version = extension.nodeJsVersion
             npmVersion = extension.npmVersion
             download = true
 
@@ -49,7 +50,7 @@ class PlatformJs : Platform<MultiGradleJsExtension>
             workDir = file("$cacheDir/nodejs")
             npmWorkDir = file("$cacheDir/npm")
             yarnWorkDir = file("$cacheDir/yarn")
-            nodeModulesDir = file("$cacheDir/node_modules")
+            nodeModulesDir = buildDir
         }
 
         dependencies {
@@ -63,6 +64,7 @@ class PlatformJs : Platform<MultiGradleJsExtension>
         tasks {
             withType<Kotlin2JsCompile> {
                 kotlinOptions.moduleKind = "umd"
+                kotlinOptions.sourceMap = true
             }
 
             create<Sync>("syncNodeModules") {
@@ -72,19 +74,20 @@ class PlatformJs : Platform<MultiGradleJsExtension>
                     configurations["testCompile"].forEach { from(zipTree(it)) }
                 }
                 include { it.path.endsWith(".js", true) }
-                into("$buildDir/node_modules")
+                into("$buildDir/kotlinjs")
             }
 
-            create<NpmTask>("installModules") {
+            create<NpmTask>("installPackages") {
                 val lst = mutableListOf("install", "mocha@${extension.mochaVersion}")
-                for (nm in extension.nodeModules)
-                    lst.add(nm.toString())
+                for ((name, version) in extension.npmPackages)
+                    lst.add("$name@$version")
                 setArgs(lst)
             }
 
             create<NodeTask>("runMocha") {
-                dependsOn("installModules", "syncNodeModules", "compileTestKotlin2Js")
-                setScript(file("$rootDir/.gradle/node/node_modules/mocha/bin/mocha"))
+                dependsOn("installPackages", "syncNodeModules", "compileTestKotlin2Js")
+                setScript(file("$buildDir/node_modules/mocha/bin/mocha"))
+                setEnvironment(mapOf("NODE_PATH" to "$buildDir/kotlinjs"))
                 setArgs(listOf(getByName<Kotlin2JsCompile>("compileTestKotlin2Js").destinationDir))
             }
 
@@ -92,7 +95,7 @@ class PlatformJs : Platform<MultiGradleJsExtension>
                 dependsOn("runMocha")
             }
 
-            for (dep in listOf("runMocha", "npmSetup", "nodeSetup", "installModules", "syncNodeModules"))
+            for (dep in listOf("runMocha", "npmSetup", "nodeSetup", "installPackages", "syncNodeModules"))
             {
                 getByName<Task>(dep).onlyIf {
                     val path = getByName<Kotlin2JsCompile>("compileTestKotlin2Js").destinationDir.toPath()

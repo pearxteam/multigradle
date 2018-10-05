@@ -8,7 +8,6 @@
 package ru.pearx.multigradle.util
 
 import org.gradle.api.Project
-import ru.pearx.multigradle.util.js.NodeModule
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.memberProperties
@@ -21,7 +20,6 @@ import kotlin.reflect.jvm.isAccessible
 open class MultiGradleExtension
 {
     lateinit var projectVersion: String
-    var kotlinDevRepo = true
     var kotlinExperimentalFeatures = mutableListOf<String>()
 
     fun load(project: Project): MultiGradleExtension

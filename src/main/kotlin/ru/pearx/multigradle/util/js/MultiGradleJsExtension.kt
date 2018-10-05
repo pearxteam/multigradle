@@ -11,8 +11,13 @@ import ru.pearx.multigradle.util.MultiGradleExtension
 
 class MultiGradleJsExtension : MultiGradleExtension()
 {
-    lateinit var nodejsVersion: String
+    lateinit var nodeJsVersion: String
     lateinit var npmVersion: String
     lateinit var mochaVersion: String
-    var nodeModules = mutableListOf<NodeModule>()
+    var npmPackages = mutableMapOf<String, String>()
+
+    inline fun npmPackages(init: MutableMap<String, String>.() -> Unit)
+    {
+        init(npmPackages)
+    }
 }
