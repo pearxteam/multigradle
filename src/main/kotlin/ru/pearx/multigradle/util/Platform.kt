@@ -9,8 +9,10 @@ package ru.pearx.multigradle.util
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.repositories
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
@@ -40,11 +42,7 @@ interface Platform<T : MultiGradleExtension>
                     jcenter()
                 }
 
-                configure<BasePluginConvention> {
-                    //carbidelin-core-jvm
-                    archivesBaseName = "${root.name}-${module.name}-$name"
-                    version = extension.projectVersion
-                }
+                version = extension.projectVersion
 
                 tasks {
                     withType<KotlinCompile<KotlinCommonOptions>> {

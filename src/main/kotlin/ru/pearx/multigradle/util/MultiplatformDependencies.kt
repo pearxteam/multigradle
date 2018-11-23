@@ -14,10 +14,10 @@ import org.gradle.api.artifacts.ProjectDependency
 fun Project.mpdep(notation: String, unnamedPlatform: Platform<*>?): Dependency
 {
     val dep = dependencies.create(notation)
-    val platform = platformOf(name)
+    val platform = platformOf(this)
     return dependencies.create(mapOf("group" to dep.group, "name" to (dep.name + if (platform == unnamedPlatform) "" else "-${platform.name}"), "version" to dep.version))
 }
 
 fun Project.mpdep(module: ProjectDependency): Project = mpdep(module.dependencyProject)
 
-fun Project.mpdep(module: Project): Project = module.project(name)
+fun Project.mpdep(module: Project): Project = module.project(platformOf(this))

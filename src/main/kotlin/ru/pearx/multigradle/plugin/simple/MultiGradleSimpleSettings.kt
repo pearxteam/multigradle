@@ -10,7 +10,7 @@ package ru.pearx.multigradle.plugin.simple
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import ru.pearx.multigradle.util.PLATFORMS
-import ru.pearx.multigradle.util.Platform
+import java.io.File
 
 
 /*
@@ -22,7 +22,11 @@ class MultiGradleSimpleSettings : Plugin<Settings>
     {
         with(target) {
             for (platform in PLATFORMS)
-                include(platform.name)
+            {
+                val proj = "${rootProject.name}-${platform.name}"
+                include(proj)
+                project(proj).projectDir = File(rootDir, platform.name)
+            }
         }
     }
 }

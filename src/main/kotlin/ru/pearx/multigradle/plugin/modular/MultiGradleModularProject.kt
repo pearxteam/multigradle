@@ -9,9 +9,6 @@ package ru.pearx.multigradle.plugin.modular
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import ru.pearx.multigradle.util.MULTIGRADLE_EXTENSION_NAME
-import ru.pearx.multigradle.util.MultiGradleExtension
-import ru.pearx.multigradle.util.Platform
 import ru.pearx.multigradle.util.platformOf
 
 /*
@@ -26,9 +23,7 @@ class MultiGradleModularProject : Plugin<Project>
             {
                 for (platform in module.subprojects)
                 {
-                    with(platform) {
-                        platformOf(name).apply(this, module, target)
-                    }
+                    platformOf(platform).apply(platform, module, target)
                 }
             }
         }

@@ -10,8 +10,6 @@ package ru.pearx.multigradle.plugin.modular
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import ru.pearx.multigradle.util.PLATFORMS
-import ru.pearx.multigradle.util.Platform
-import java.io.File
 import java.nio.file.Files
 
 /*
@@ -22,14 +20,16 @@ class MultiGradleModularSettings : Plugin<Settings>
     override fun apply(target: Settings)
     {
         with(target) {
-            val root = rootDir.toPath().normalize()
+            val root = rootDir.toPath()
             for(subPath in Files.newDirectoryStream(root.resolve("modules")))
             {
                 if(Files.isDirectory(subPath))
                 {
                     for(platform in PLATFORMS)
                     {
-                        include(root.relativize(subPath.resolve(platform.name)).toString().replace(File.separatorChar, ':'))
+                        val proj = ":modules:${subPath.fileName}:${rootProject.name}-${subPath.fileName}-${platform.name}"
+                        include(proj)
+                        project(proj).projectDir = subPath.resolve(platform.name).toFile()
                     }
                 }
             }

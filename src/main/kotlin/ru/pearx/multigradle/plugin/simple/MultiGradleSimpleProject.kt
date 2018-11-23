@@ -9,9 +9,6 @@ package ru.pearx.multigradle.plugin.simple
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import ru.pearx.multigradle.util.MULTIGRADLE_EXTENSION_NAME
-import ru.pearx.multigradle.util.MultiGradleExtension
-import ru.pearx.multigradle.util.Platform
 import ru.pearx.multigradle.util.platformOf
 
 
@@ -23,11 +20,9 @@ class MultiGradleSimpleProject : Plugin<Project>
     override fun apply(target: Project)
     {
         with(target) {
-            for (platform in subprojects)
+            for (platformProject in subprojects)
             {
-                with(platform) {
-                    platformOf(name).apply(this, target, target)
-                }
+                platformOf(platformProject).apply(platformProject, target, target)
             }
         }
     }

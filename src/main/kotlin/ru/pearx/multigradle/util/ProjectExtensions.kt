@@ -8,6 +8,7 @@
 package ru.pearx.multigradle.util
 
 import org.gradle.api.Project
+import org.gradle.api.UnknownProjectException
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import java.net.URI
 
@@ -17,7 +18,7 @@ inline fun Project.subplatforms(crossinline init: Project.(platform: Platform<*>
 {
     subprojects {
         for (platform in PLATFORMS)
-            if (platform.name == name)
+            if (platform.name == projectDir.name)
                 init(platform)
     }
 }
@@ -31,7 +32,7 @@ inline fun Project.subplatforms(platform: Platform<*>, crossinline init: Project
 
 inline fun Project.ifPlatform(platform: Platform<*>, init: Project.() -> Unit)
 {
-    if(name == platform.name)
+    if (projectDir.name == platform.name)
         init()
 }
 
@@ -43,4 +44,12 @@ fun RepositoryHandler.kotlinDev()
 fun RepositoryHandler.kotlinEap()
 {
     maven { url = URI("https://dl.bintray.com/kotlin/kotlin-eap/") }
+}
+
+fun Project.project(platform: Platform<*>) : Project
+{
+    for(project in subprojects)
+        if(project.projectDir.name == platform.name)
+            return project
+    throw UnknownProjectException("Project of platform '$platform' couldn't be be found in $project")
 }

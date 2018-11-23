@@ -7,6 +7,7 @@
 
 package ru.pearx.multigradle.util
 
+import org.gradle.api.Project
 import ru.pearx.multigradle.util.common.PlatformCommon
 import ru.pearx.multigradle.util.js.PlatformJs
 import ru.pearx.multigradle.util.jvm.PlatformJvm
@@ -19,3 +20,5 @@ val PLATFORM_JVM = PlatformJvm()
 val PLATFORMS = listOf(PLATFORM_COMMON, PLATFORM_JS, PLATFORM_JVM)
 
 fun platformOf(name: String): Platform<out MultiGradleExtension> = PLATFORMS.first { it.name == name } ?: throw IllegalArgumentException("The platform of name '$name' doesn't exist!")
+
+fun platformOf(project: Project) = platformOf(project.projectDir.name)

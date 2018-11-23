@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import ru.pearx.multigradle.util.PLATFORM_COMMON
 import ru.pearx.multigradle.util.Platform
+import ru.pearx.multigradle.util.project
 
 class PlatformJvm : Platform<MultiGradleJvmExtension>
 {
@@ -45,7 +46,7 @@ class PlatformJvm : Platform<MultiGradleJvmExtension>
         }
 
         dependencies {
-            "expectedBy"(module.project(PLATFORM_COMMON.name))
+            "expectedBy"(module.project(PLATFORM_COMMON))
 
             "compile"(kotlin("stdlib-jdk${extension.javaVersion}"))
 

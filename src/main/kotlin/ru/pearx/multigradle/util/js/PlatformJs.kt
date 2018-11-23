@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJsPlugin
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import ru.pearx.multigradle.util.PLATFORM_COMMON
 import ru.pearx.multigradle.util.Platform
-import java.io.File
+import ru.pearx.multigradle.util.project
 import java.nio.file.Files
 
 class PlatformJs : Platform<MultiGradleJsExtension>
@@ -54,7 +54,7 @@ class PlatformJs : Platform<MultiGradleJsExtension>
         }
 
         dependencies {
-            "expectedBy"(module.project(PLATFORM_COMMON.name))
+            "expectedBy"(module.project(PLATFORM_COMMON))
 
             "compile"(kotlin("stdlib-js"))
 
