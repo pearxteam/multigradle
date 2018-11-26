@@ -29,7 +29,9 @@ class MultiGradleModularSettings : Plugin<Settings>
                     {
                         val proj = ":modules:${subPath.fileName}:${rootProject.name}-${subPath.fileName}-${platform.name}"
                         include(proj)
-                        project(proj).projectDir = subPath.resolve(platform.name).toFile()
+                        val projDir = subPath.resolve(platform.name).toFile()
+                        project(proj).projectDir = projDir
+                        projDir.mkdirs()
                     }
                 }
             }

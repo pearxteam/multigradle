@@ -25,7 +25,9 @@ class MultiGradleSimpleSettings : Plugin<Settings>
             {
                 val proj = "${rootProject.name}-${platform.name}"
                 include(proj)
-                project(proj).projectDir = File(rootDir, platform.name)
+                val projDir = File(rootDir, platform.name)
+                project(proj).projectDir = projDir
+                projDir.mkdirs()
             }
         }
     }
