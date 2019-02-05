@@ -10,7 +10,6 @@ package ru.pearx.multigradle.util.common
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformCommonPlugin
-import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 import ru.pearx.multigradle.util.MultiGradleExtension
 import ru.pearx.multigradle.util.Platform
 
