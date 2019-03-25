@@ -1,5 +1,12 @@
 pipeline {
     agent any
+    environment {
+        gradle.publish.key = credentials('gradle.publish.key')
+        gradle.publish.secret = credentials('gradle.publish.secret')
+        pearxRepo = credentials('pearxRepo')
+        pearxRepoUsername = env.pearxRepo_USR
+        pearxRepoPassword = env.pearxRepo_PSW
+    }
     stages {
         stage('checkout') {
             steps {
@@ -11,19 +18,17 @@ pipeline {
                 sh './gradlew build'
             }
         }
-        withCredentials([usernamePassword(credentialsId: 'pearxRepo', passwordVariable: 'pearxRepoPassword', usernameVariable: 'pearxRepoUsername'), string(credentialsId: 'gradle.publish.key', variable: 'gradle.publish.key'), string(credentialsId: 'gradle.publish.secret', variable: 'gradle.publish.secret')]) {
-            stage('deploy-develop') {
-                when { branch 'develop' }
-                steps {
-                    sh "./gradlew publishDevelop"
-                }
+        stage('deploy-develop') {
+            when { branch 'develop' }
+            steps {
+                sh "./gradlew publishDevelop"
             }
+        }
 
-            stage('deploy-release') {
-                when { branch 'master' }
-                steps {
-                    sh "./gradlew publishRelease"
-                }
+        stage('deploy-release') {
+            when { branch 'master' }
+            steps {
+                sh "./gradlew publishRelease"
             }
         }
     }
