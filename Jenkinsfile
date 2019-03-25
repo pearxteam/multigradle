@@ -6,11 +6,6 @@ pipeline {
         RU_PEARX_REPO = credentials('pearxRepo')
     }
     stages {
-        stage('checkout') {
-            steps {
-                checkout scm
-            }
-        }
         stage('build') {
             steps {
                 sh './gradlew build'
