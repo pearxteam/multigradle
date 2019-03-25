@@ -48,8 +48,8 @@ publishing {
     repositories {
         fun AuthenticationSupported.pearxCredentials() {
             credentials {
-                username = properties["pearxRepoUsername"].toString()
-                password = properties["pearxRepoPassword"].toString()
+                username = properties["ru.pearx.repo.usr"].toString()
+                password = properties["ru.pearx.repo.psw"].toString()
             }
         }
         maven {
