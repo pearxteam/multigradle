@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        gradle.publish.key = credentials('gradle.publish.key')
-        gradle.publish.secret = credentials('gradle.publish.secret')
+        'gradle.publish.key' = credentials('gradle.publish.key')
+        'gradle.publish.secret' = credentials('gradle.publish.secret')
         pearxRepo = credentials('pearxRepo')
         pearxRepoUsername = env.pearxRepo_USR
         pearxRepoPassword = env.pearxRepo_PSW
