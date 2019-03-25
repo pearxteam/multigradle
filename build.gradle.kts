@@ -44,11 +44,44 @@ gradlePlugin {
     }
 }
 
+publishing {
+    repositories {
+        fun AuthenticationSupported.pearxCredentials() {
+            credentials {
+                username = properties["pearxRepoUsername"].toString()
+                password = properties["pearxRepoPassword"].toString()
+            }
+        }
+        maven {
+            pearxCredentials()
+            name = "develop"
+            url = uri("https://repo.pearx.ru/maven2/develop/")
+        }
+        maven {
+            pearxCredentials()
+            name = "release"
+            url = uri("https://repo.pearx.ru/maven2/release/")
+        }
+    }
+}
+
 pluginBundle {
     website = "https://github.com/pearxteam/multigradle"
     vcsUrl = "https://github.com/pearxteam/multigradle"
     tags = listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform")
     mavenCoordinates {
         groupId = "ru.pearx.multigradle"
+    }
+}
+
+tasks {
+    register("publishDevelop") {
+        group = "publishing"
+        dependsOn(withType<PublishToMavenRepository>().matching { it.repository == publishing.repositories["develop"] })
+    }
+    register("publishRelease") {
+        group = "publishing"
+        dependsOn(withType<PublishToMavenRepository>().matching { it.repository == publishing.repositories["release"] })
+        dependsOn(named("publishPlugins"))
     }
 }
