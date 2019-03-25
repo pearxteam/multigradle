@@ -1,10 +1,5 @@
 pipeline {
     agent any
-    environment {
-        GRADLE_PUBLISH_KEY = credentials('gradle.publish.key')
-        GRADLE_PUBLISH_SECRET = credentials('gradle.publish.secret')
-        RU_PEARX_REPO = credentials('pearxRepo')
-    }
     stages {
         stage('build') {
             steps {
@@ -14,14 +9,18 @@ pipeline {
         stage('deploy-develop') {
             when { branch 'develop' }
             steps {
-                sh "./gradlew publishDevelop"
+                withCredentials([file(credentialsId: 'gradle-secret-file', variable: 'GRADLE_PRIVATE_PROPERTIES_PATH')]) {
+                    sh "./gradlew publishDevelop -PprivatePropertiesPath=${GRADLE_PRIVATE_PROPERTIES_PATH}"
+                }
             }
         }
 
         stage('deploy-release') {
             when { branch 'master' }
             steps {
-                sh "./gradlew publishRelease"
+                withCredentials([file(credentialsId: 'gradle-secret-file', variable: 'GRADLE_PRIVATE_PROPERTIES_PATH')]) {
+                    sh "./gradlew publishRelease -PprivatePropertiesPath=${GRADLE_PRIVATE_PROPERTIES_PATH}"
+                }
             }
         }
     }

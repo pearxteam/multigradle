@@ -5,6 +5,8 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import java.util.*
+
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
@@ -12,8 +14,19 @@ plugins {
     id("com.gradle.plugin-publish")
 }
 
+val multigradleVersion: String by project
+val kotlinVersion: String by project
+val nodeVersion: String by project
+val privatePropertiesPath: String? by project
+
+if (privatePropertiesPath != null) {
+    for ((k, v) in Properties().apply { file(privatePropertiesPath!!).reader().use { load(it) } }) {
+        extra[k.toString()] = v.toString()
+    }
+}
+
 group = "ru.pearx.multigradle"
-version = properties["multigradleVersion"]!!
+version = multigradleVersion
 
 repositories {
     jcenter()
@@ -21,14 +34,13 @@ repositories {
 }
 
 dependencies {
-    "compile"("org.jetbrains.kotlin:kotlin-gradle-plugin:${properties["kotlinVersion"]}")
-    "compile"("com.moowork.node:com.moowork.node.gradle.plugin:${properties["nodeVersion"]}")
+    "compile"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    "compile"("com.moowork.node:com.moowork.node.gradle.plugin:$nodeVersion")
 }
 
 gradlePlugin {
     plugins {
-        fun createMultiGradlePlugin(type: String, applicableTo: String)
-        {
+        fun createMultiGradlePlugin(type: String, applicableTo: String) {
             create("multigradle-$type-$applicableTo") {
                 id = "ru.pearx.multigradle.$type.$applicableTo"
                 displayName = "MultiGradle ${type.capitalize()} [${applicableTo.capitalize()}]"
@@ -48,8 +60,8 @@ publishing {
     repositories {
         fun AuthenticationSupported.pearxCredentials() {
             credentials {
-                username = properties["ru.pearx.repo.usr"].toString()
-                password = properties["ru.pearx.repo.psw"].toString()
+                username = properties["pearxRepoUsername"].toString()
+                password = properties["pearxRepoPassword"].toString()
             }
         }
         maven {
