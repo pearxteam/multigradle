@@ -108,5 +108,6 @@ tasks {
         group = "publishing"
         dependsOn(withType<PublishToMavenRepository>().matching { it.repository == publishing.repositories["release"] })
         dependsOn(named("githubRelease"))
+        dependsOn(named("publishPlugins"))
     }
 }
