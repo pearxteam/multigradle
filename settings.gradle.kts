@@ -9,12 +9,15 @@ rootProject.name = "multigradle"
 
 val kotlinVersion: String by settings
 val pluginPublishVersion: String by settings
+val githubReleaseVersion: String by settings
 
 pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if(requested.id.id == "com.gradle.plugin-publish")
                 useVersion(pluginPublishVersion)
+            if(requested.id.id.startsWith("com.github.breadmoirai.github-release"))
+                useVersion(githubReleaseVersion)
         }
     }
 }

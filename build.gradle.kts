@@ -5,28 +5,30 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import java.util.*
+import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
 
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
     id("com.gradle.plugin-publish")
+    id("com.github.breadmoirai.github-release")
 }
 
-val multigradleVersion: String by project
+val projectVersion: String by project
+val projectDescription: String by project
+val projectChangelog: String by project
 val kotlinVersion: String by project
 val nodeVersion: String by project
-val privatePropertiesPath: String? by project
 
-if (privatePropertiesPath != null) {
-    for ((k, v) in Properties().apply { file(privatePropertiesPath!!).reader().use { load(it) } }) {
-        extra[k.toString()] = v.toString()
-    }
-}
+val devBuildNumber: String? by project
+val pearxRepoUsername: String? by project
+val pearxRepoPassword: String? by project
+val githubAccessToken: String? by project
 
 group = "ru.pearx.multigradle"
-version = multigradleVersion
+version = if (devBuildNumber != null) "$projectVersion-dev-$devBuildNumber" else projectVersion
+description = projectDescription.replace("%type%", "modular and simple")
 
 repositories {
     jcenter()
@@ -34,8 +36,8 @@ repositories {
 }
 
 dependencies {
-    "compile"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    "compile"("com.moowork.node:com.moowork.node.gradle.plugin:$nodeVersion")
+    "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    "api"("com.moowork.node:com.moowork.node.gradle.plugin:$nodeVersion")
 }
 
 gradlePlugin {
@@ -44,7 +46,7 @@ gradlePlugin {
             create("multigradle-$type-$applicableTo") {
                 id = "ru.pearx.multigradle.$type.$applicableTo"
                 displayName = "MultiGradle ${type.capitalize()} [${applicableTo.capitalize()}]"
-                description = "A plugin that simplifies the creation of $type multiplatform Kotlin projects."
+                description = projectDescription.replace("%type%", type)
                 implementationClass = "ru.pearx.multigradle.plugin.$type.MultiGradle${type.capitalize()}${applicableTo.capitalize()}"
             }
         }
@@ -60,8 +62,8 @@ publishing {
     repositories {
         fun AuthenticationSupported.pearxCredentials() {
             credentials {
-                username = properties["pearxRepoUsername"].toString()
-                password = properties["pearxRepoPassword"].toString()
+                username = pearxRepoUsername
+                password = pearxRepoPassword
             }
         }
         maven {
@@ -86,6 +88,17 @@ pluginBundle {
     }
 }
 
+configure<GithubReleaseExtension> {
+    setToken(githubAccessToken)
+    setOwner("pearxteam")
+    setRepo(name)
+    setTargetCommitish("master")
+    setBody(projectChangelog)
+    afterEvaluate {
+        setReleaseAssets(publishing.publications.map { (it as MavenPublication).artifacts }.flatten().map { it.file })
+    }
+}
+
 tasks {
     register("publishDevelop") {
         group = "publishing"
@@ -94,6 +107,6 @@ tasks {
     register("publishRelease") {
         group = "publishing"
         dependsOn(withType<PublishToMavenRepository>().matching { it.repository == publishing.repositories["release"] })
-        dependsOn(named("publishPlugins"))
+        dependsOn(named("githubRelease"))
     }
 }
