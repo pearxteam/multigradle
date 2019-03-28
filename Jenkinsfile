@@ -1,5 +1,8 @@
 @Library('ci-skip') _
 pipeline {
+    environment {
+        JENKINS_NODE_COOKIE = 'dontKillMe'
+    }
     agent any
     stages {
         stage('prepare') { steps { ciSkip 'check' } }
