@@ -71,7 +71,7 @@ class PlatformJs : Platform<MultiGradleJsExtension>
                 dependsOn("compileKotlin2Js", "compileTestKotlin2Js")
                 from(this@configureAfter.the<SourceSetContainer>()["main"].output)
                 doFirst {
-                    configurations["testImplementation"].forEach { from(zipTree(it)) }
+                    configurations["testRuntimeClasspath"].forEach { from(zipTree(it)) }
                 }
                 include { it.path.endsWith(".js", true) }
                 into("$buildDir/kotlinjs")
