@@ -94,9 +94,6 @@ configure<GithubReleaseExtension> {
     setRepo(name)
     setTargetCommitish("master")
     setBody(projectChangelog)
-    afterEvaluate {
-        setReleaseAssets(publishing.publications.map { (it as MavenPublication).artifacts }.flatten().map { it.file })
-    }
 }
 
 tasks {
