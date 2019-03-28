@@ -56,9 +56,9 @@ class PlatformJs : Platform<MultiGradleJsExtension>
         dependencies {
             "expectedBy"(module.project(PLATFORM_COMMON))
 
-            "compile"(kotlin("stdlib-js"))
+            "api"(kotlin("stdlib-js"))
 
-            "testCompile"(kotlin("test-js"))
+            "testImplementation"(kotlin("test-js"))
         }
 
         tasks {
@@ -71,7 +71,7 @@ class PlatformJs : Platform<MultiGradleJsExtension>
                 dependsOn("compileKotlin2Js", "compileTestKotlin2Js")
                 from(this@configureAfter.the<SourceSetContainer>()["main"].output)
                 doFirst {
-                    configurations["testCompile"].forEach { from(zipTree(it)) }
+                    configurations["testRuntimeClasspath"].forEach { from(zipTree(it)) }
                 }
                 include { it.path.endsWith(".js", true) }
                 into("$buildDir/kotlinjs")
