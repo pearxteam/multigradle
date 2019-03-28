@@ -23,9 +23,11 @@ pipeline {
             environment {
                 PEARX_REPO = credentials('pearx-repo-user')
                 GITHUB_ACCESS_TOKEN = credentials('github-release-token')
+                GRADLE_PUBLISH_KEY = credentials('gradle-publish-key')
+                GRADLE_PUBLISH_SECRET = credentials('gradle-publish-secret')
             }
             steps {
-                sh "./gradlew publishRelease -PpearxRepoUsername=${PEARX_REPO_USR} -PpearxRepoPassword=${PEARX_REPO_PSW} -PgithubAccessToken=${GITHUB_ACCESS_TOKEN}"
+                sh "./gradlew publishRelease -PpearxRepoUsername=${PEARX_REPO_USR} -PpearxRepoPassword=${PEARX_REPO_PSW} -PgithubAccessToken=${GITHUB_ACCESS_TOKEN} -Pgradle.publish.key=${GRADLE_PUBLISH_KEY} -Pgradle.publish.secret=${GRADLE_PUBLISH_SECRET}"
             }
         }
     }
