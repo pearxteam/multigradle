@@ -48,11 +48,11 @@ class PlatformJvm : Platform<MultiGradleJvmExtension>
         dependencies {
             "expectedBy"(module.project(PLATFORM_COMMON))
 
-            "compile"(kotlin("stdlib-jdk${extension.javaVersion}"))
+            "api"(kotlin("stdlib-jdk${extension.javaVersion}"))
 
-            "testCompile"(kotlin("test-annotations-common"))
-            "testCompile"(kotlin("test-junit5"))
-            "testCompile"("org.junit.jupiter:junit-jupiter-api:${extension.junitJupiterVersion}")
+            "testImplementation"(kotlin("test-annotations-common"))
+            "testImplementation"(kotlin("test-junit5"))
+            "testImplementation"("org.junit.jupiter:junit-jupiter-api:${extension.junitJupiterVersion}")
             "testRuntime"("org.junit.jupiter:junit-jupiter-engine:${extension.junitJupiterVersion}")
         }
 

@@ -30,10 +30,10 @@ class PlatformCommon : Platform<MultiGradleExtension>
     override fun Project.configureAfter(module: Project, root: Project, extension: MultiGradleExtension)
     {
         dependencies {
-            "compile"(kotlin("stdlib-common"))
+            "api"(kotlin("stdlib-common"))
 
-            "testCompile"(kotlin("test-common"))
-            "testCompile"(kotlin("test-annotations-common"))
+            "testImplementation"(kotlin("test-common"))
+            "testImplementation"(kotlin("test-annotations-common"))
         }
     }
 }
