@@ -7,12 +7,12 @@
 
 package ru.pearx.multigradle.util
 
+import com.moowork.gradle.node.task.NodeTask
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.repositories
-import org.gradle.kotlin.dsl.withType
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Sync
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
@@ -51,6 +51,23 @@ interface Platform<T : MultiGradleExtension>
                             kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs.toMutableList().apply {
                                 for (feature in extension.kotlinExperimentalFeatures)
                                     add("-Xuse-experimental=$feature")
+                            }
+                        }
+                    }
+
+                    if(extension.createPrefixedTestResults) {
+                        named("test") {
+                            finalizedBy("prefixTestResults")
+                        }
+
+                        create<Sync>("prefixTestResults") {
+                            from("$buildDir/test-results")
+                            into("$buildDir/test-results-prefixed")
+                            include("**/*.xml")
+                            // todo: make filtering not just string replacing
+                            filter { line ->
+                                line.replace(Regex("testsuite name=\"(.+?)\""), "testsuite name=\"${this@Platform.name} $1\"")
+                                line.replace(Regex("classname=\"(.+?)\""), "classname=\"${this@Platform.name} $1\"")
                             }
                         }
                     }

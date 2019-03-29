@@ -21,6 +21,7 @@ open class MultiGradleExtension
 {
     lateinit var projectVersion: String
     var kotlinExperimentalFeatures = mutableListOf<String>()
+    var createPrefixedTestResults = true
 
     fun load(project: Project): MultiGradleExtension
     {
