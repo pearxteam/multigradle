@@ -78,7 +78,7 @@ class PlatformJs : Platform<MultiGradleJsExtension>
             }
 
             create<NpmTask>("installPackages") {
-                val lst = mutableListOf("install", "mocha@${extension.mochaVersion}")
+                val lst = mutableListOf("install", "mocha@${extension.mochaVersion}", "mocha-junit-reporter@${extension.mochaJunitReporterVersion}")
                 for ((name, version) in extension.npmPackages)
                     lst.add("$name@$version")
                 setArgs(lst)
@@ -87,8 +87,8 @@ class PlatformJs : Platform<MultiGradleJsExtension>
             create<NodeTask>("runMocha") {
                 dependsOn("installPackages", "syncNodeModules", "compileTestKotlin2Js")
                 setScript(file("$buildDir/node_modules/mocha/bin/mocha"))
-                setEnvironment(mapOf("NODE_PATH" to "$buildDir/kotlinjs"))
-                setArgs(listOf(getByName<Kotlin2JsCompile>("compileTestKotlin2Js").destinationDir))
+                setEnvironment(mapOf("NODE_PATH" to "$buildDir/kotlinjs", "MOCHA_FILE" to "$buildDir/test-results/test/mocha.xml"))
+                setArgs(listOf(getByName<Kotlin2JsCompile>("compileTestKotlin2Js").destinationDir, "--reporter", "mocha-junit-reporter"))
             }
 
             named<Test>("test") {

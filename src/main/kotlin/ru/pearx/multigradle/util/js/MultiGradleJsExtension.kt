@@ -14,6 +14,7 @@ class MultiGradleJsExtension : MultiGradleExtension()
     lateinit var nodeJsVersion: String
     lateinit var npmVersion: String
     lateinit var mochaVersion: String
+    lateinit var mochaJunitReporterVersion: String
     var npmPackages = mutableMapOf<String, String>()
 
     inline fun npmPackages(init: MutableMap<String, String>.() -> Unit)
