@@ -7,10 +7,8 @@
 
 package ru.pearx.multigradle.util
 
-import com.moowork.gradle.node.task.NodeTask
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Sync
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
