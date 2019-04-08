@@ -9,21 +9,14 @@ package ru.pearx.multigradle.plugin.simple
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import ru.pearx.multigradle.util.platformOf
+import ru.pearx.multigradle.util.initializers.initializeMultiGradle
 
 
 /*
  * Created by mrAppleXZ on 06.09.18.
  */
-class MultiGradleSimpleProject : Plugin<Project>
-{
-    override fun apply(target: Project)
-    {
-        with(target) {
-            for (platformProject in subprojects)
-            {
-                platformOf(platformProject).apply(platformProject, target, target)
-            }
-        }
+class MultiGradleSimpleProject : Plugin<Project> {
+    override fun apply(target: Project) {
+        target.initializeMultiGradle()
     }
 }

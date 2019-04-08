@@ -8,48 +8,29 @@
 package ru.pearx.multigradle.util
 
 import org.gradle.api.Project
-import org.gradle.api.UnknownProjectException
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import java.net.URI
 
 fun Project.propertyString(name: String) = properties[name].toString()
 
-inline fun Project.subplatforms(crossinline init: Project.(platform: Platform<*>) -> Unit)
-{
-    subprojects {
-        for (platform in PLATFORMS)
-            if (platform.name == projectDir.name)
-                init(platform)
-    }
-}
-
-inline fun Project.subplatforms(platform: Platform<*>, crossinline init: Project.() -> Unit)
-{
-    subprojects {
-        ifPlatform(platform, init)
-    }
-}
-
-inline fun Project.ifPlatform(platform: Platform<*>, init: Project.() -> Unit)
-{
-    if (projectDir.name == platform.name)
-        init()
-}
-
-fun RepositoryHandler.kotlinDev()
-{
+fun RepositoryHandler.kotlinDev() {
     maven { url = URI("https://dl.bintray.com/kotlin/kotlin-dev/") }
 }
 
-fun RepositoryHandler.kotlinEap()
-{
+fun RepositoryHandler.kotlinEap() {
     maven { url = URI("https://dl.bintray.com/kotlin/kotlin-eap/") }
 }
 
-fun Project.project(platform: Platform<*>) : Project
-{
-    for(project in subprojects)
-        if(project.projectDir.name == platform.name)
-            return project
-    throw UnknownProjectException("Project of platform '$platform' couldn't be be found in $project")
-}
+inline operator fun <T : KotlinCompilation<*>> T.invoke(block: T.() -> Unit) = block()
+
+//fun Project.mpdep(notation: String, unnamedPlatform: Platform<*>?): Dependency
+//{
+//    val dep = dependencies.create(notation)
+//    val platform = platformOf(this)
+//    return dependencies.create(mapOf("group" to dep.group, "name" to (dep.name + if (platform == unnamedPlatform) "" else "-${platform.name}"), "version" to dep.version))
+//}
+//
+//fun Project.mpdep(module: ProjectDependency): Project = mpdep(module.dependencyProject)
+//
+//fun Project.mpdep(module: Project): Project = module.project(platformOf(this))
