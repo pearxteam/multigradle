@@ -25,7 +25,8 @@ internal fun Project.jsInitializer() {
         workDir = file("$cacheDir/nodejs")
         npmWorkDir = file("$cacheDir/npm")
         yarnWorkDir = file("$cacheDir/yarn")
-        nodeModulesDir = buildDir
+        // todo move to $buildDir/node_modules when https://github.com/srs/gradle-node-plugin/issues/300 will be resolved
+        nodeModulesDir = file("$projectDir/node_modules")
     }
 
     configure<KotlinMultiplatformExtension> {
@@ -76,7 +77,7 @@ internal fun Project.jsInitializer() {
 
         val jsTestRunMocha by registering(NodeTask::class) {
             dependsOn(jsTestInstallPackages, jsTestSyncNodeModules, jsTestCompilation.compileAllTaskName)
-            setScript(file("$buildDir/node_modules/mocha/bin/mocha"))
+            setScript(file("${project.the<NodeExtension>().nodeModulesDir}/mocha/bin/mocha"))
             setEnvironment(mapOf("NODE_PATH" to "$buildDir/kotlinjs", "JUNIT_REPORT_PATH" to "$buildDir/test-results/jsTest/mocha.xml"))
             setArgs(listOf(jsTestCompilation.output.classesDirs.first().toString(), "--reporter", "mocha-jenkins-reporter"))
         }

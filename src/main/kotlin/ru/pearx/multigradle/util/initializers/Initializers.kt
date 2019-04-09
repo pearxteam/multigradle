@@ -16,10 +16,11 @@ internal val initializers: Map<String, Initializer> = mapOf(
 )
 
 internal fun Project.initializeMultiGradle() {
-    parentInitializer()
+    preInit()
     for((name, initializer) in initializers) {
         initializer()
     }
+    postInit()
     val extension = MultiGradleExtension(this).load(this)
     extensions.add(MULTIGRADLE_EXTENSION_NAME, extension)
 }

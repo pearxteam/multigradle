@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import ru.pearx.multigradle.util.MultiGradleExtension
 
-fun Project.parentInitializer() {
+fun Project.preInit() {
     apply<KotlinMultiplatformPluginWrapper>()
     apply<BasePlugin>()
 
@@ -20,6 +20,10 @@ fun Project.parentInitializer() {
         jcenter()
     }
 
+
+}
+
+fun Project.postInit() {
     tasks {
         for (target in the<KotlinMultiplatformExtension>().targets.filterNot { it.name == "metadata" }) {
             val testTask = named<Test>("${target.name}Test") {
@@ -28,7 +32,7 @@ fun Project.parentInitializer() {
 
             create<Sync>("${testTask.name}Prefix") {
                 onlyIf { project.the<MultiGradleExtension>().createPrefixedTestResults }
-                val sourceSetName = target.compilations["test"].defaultSourceSet
+                val sourceSetName = target.compilations["test"].defaultSourceSet.name
                 from("$buildDir/test-results/$sourceSetName")
                 into("$buildDir/test-results-prefixed/$sourceSetName")
                 include("**/*.xml")
