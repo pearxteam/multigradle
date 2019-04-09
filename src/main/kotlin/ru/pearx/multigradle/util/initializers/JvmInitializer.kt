@@ -4,6 +4,7 @@
 package ru.pearx.multigradle.util.initializers
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -33,6 +34,13 @@ internal fun Project.jvmInitializer() {
                     }
                 }
             }
+        }
+    }
+
+    tasks {
+        named<Test>("jvmTest") {
+            @Suppress("UnstableApiUsage")
+            useJUnitPlatform()
         }
     }
 }
