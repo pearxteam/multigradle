@@ -7,7 +7,7 @@ import org.gradle.api.Project
 import ru.pearx.multigradle.plugin.MULTIGRADLE_EXTENSION_NAME
 import ru.pearx.multigradle.util.MultiGradleExtension
 
-internal typealias Initializer = Project.(extension: MultiGradleExtension) -> Unit
+internal typealias Initializer = Project.() -> Unit
 
 internal val initializers: Map<String, Initializer> = mapOf(
     "js" to Project::jsInitializer,
@@ -16,10 +16,10 @@ internal val initializers: Map<String, Initializer> = mapOf(
 )
 
 internal fun Project.initializeMultiGradle() {
-    val extension = MultiGradleExtension().load(this)
-    extensions.add(MULTIGRADLE_EXTENSION_NAME, extension)
-    parentInitializer(extension)
+    parentInitializer()
     for((name, initializer) in initializers) {
-        initializer(extension)
+        initializer()
     }
+    val extension = MultiGradleExtension(this).load(this)
+    extensions.add(MULTIGRADLE_EXTENSION_NAME, extension)
 }

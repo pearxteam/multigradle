@@ -7,7 +7,13 @@
 
 package ru.pearx.multigradle.util
 
+import com.moowork.gradle.node.NodeExtension
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.kotlin.dsl.*
+import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.memberProperties
@@ -17,23 +23,32 @@ import kotlin.reflect.jvm.isAccessible
 /*
  * Created by mrAppleXZ on 01.09.18.
  */
-open class MultiGradleExtension() {
-    // COMMON
-    lateinit var projectVersion: String
+open class MultiGradleExtension(private val project: Project) {
+    //region COMMON
+    var projectVersion: String by project.alias({ version.toString() }, Project::setVersion)
     var createPrefixedTestResults = true
+    //endregion
 
-    // JVM
+    //region JVM
     lateinit var junitJupiterVersion: String
-    lateinit var jacocoVersion: String
 
-    lateinit var javaVersion: String
+    var jacocoVersion: String by project.the<JacocoPluginExtension>().alias(JacocoPluginExtension::getToolVersion, JacocoPluginExtension::setToolVersion)
 
-    val javaVersionFull
-        get() = "1.$javaVersion"
+    private lateinit var _javaVersion: String
+    var javaVersion: String
+        get() = _javaVersion
+        set(value) {
+            _javaVersion = value
+            project.the<KotlinMultiplatformExtension>().jvm {
+                compilations.configureEach { kotlinOptions.jvmTarget = "1.$value" }
+            }
+            project.the<JavaPluginConvention>().sourceCompatibility = JavaVersion.toVersion(value)
+        }
+    //endregion
 
-    // JS
-    lateinit var nodeJsVersion: String
-    lateinit var npmVersion: String
+    //region JS
+    var nodeJsVersion: String by project.the<NodeExtension>().alias(NodeExtension::getVersion, NodeExtension::setVersion)
+    var npmVersion: String by project.the<NodeExtension>().alias(NodeExtension::getNpmVersion, NodeExtension::setNpmVersion)
     lateinit var mochaVersion: String
     lateinit var mochaJunitReporterVersion: String
     var npmPackages = mutableMapOf<String, String>()
@@ -41,8 +56,7 @@ open class MultiGradleExtension() {
     inline fun npmPackages(init: MutableMap<String, String>.() -> Unit) {
         init(npmPackages)
     }
-
-    //
+    //endregion
 
     fun load(project: Project): MultiGradleExtension {
         val stringType = String::class.createType()
