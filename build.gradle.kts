@@ -53,7 +53,6 @@ gradlePlugin {
 
         createMultiGradlePlugin("modular", "settings")
         createMultiGradlePlugin("modular", "project")
-        createMultiGradlePlugin("simple", "settings")
         createMultiGradlePlugin("simple", "project")
     }
 }
