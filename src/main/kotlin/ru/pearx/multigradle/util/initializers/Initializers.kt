@@ -17,7 +17,7 @@ internal val initializers: Map<String, Initializer> = mapOf(
 
 internal fun Project.initializeMultiGradle() {
     preInit()
-    for((name, initializer) in initializers) {
+    for((_, initializer) in initializers) {
         initializer()
     }
     postInit()
