@@ -18,11 +18,11 @@ class MultiGradleModularSettings : Plugin<Settings> {
     override fun apply(target: Settings) {
         with(target) {
             val root = rootDir.toPath()
-            for (subPath in Files.newDirectoryStream(root.resolve("modules"))) {
-                if (Files.isDirectory(subPath)) {
-                    val proj = ":modules:${subPath.fileName}:${rootProject.name}-${subPath.fileName}"
+            for (modulePath in Files.newDirectoryStream(root.resolve("modules"))) {
+                if (Files.isDirectory(modulePath)) {
+                    val proj = ":modules:${rootProject.name}-${modulePath.fileName}"
                     include(proj)
-                    val projDir = subPath.toFile()
+                    val projDir = modulePath.toFile()
                     project(proj).projectDir = projDir
                     projDir.mkdirs()
                 }
