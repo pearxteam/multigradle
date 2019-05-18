@@ -5,18 +5,21 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package ru.pearx.multigradle.plugin.simple
+package net.pearx.multigradle.plugin.modular
 
+import net.pearx.multigradle.util.initializers.initializeMultiGradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import ru.pearx.multigradle.util.initializers.initializeMultiGradle
-
 
 /*
- * Created by mrAppleXZ on 06.09.18.
+ * Created by mrAppleXZ on 01.09.18.
  */
-class MultiGradleSimpleProject : Plugin<Project> {
+class MultiGradleModularProject : Plugin<Project> {
     override fun apply(target: Project) {
-        target.initializeMultiGradle()
+        with(target) {
+            for (module in project("modules").subprojects) {
+                module.initializeMultiGradle()
+            }
+        }
     }
 }

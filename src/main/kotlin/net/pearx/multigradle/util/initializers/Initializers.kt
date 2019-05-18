@@ -1,11 +1,11 @@
 @file:JvmMultifileClass
 @file:JvmName("InitializersKt")
 
-package ru.pearx.multigradle.util.initializers
+package net.pearx.multigradle.util.initializers
 
 import org.gradle.api.Project
-import ru.pearx.multigradle.plugin.MULTIGRADLE_EXTENSION_NAME
-import ru.pearx.multigradle.util.MultiGradleExtension
+import net.pearx.multigradle.plugin.MULTIGRADLE_EXTENSION_NAME
+import net.pearx.multigradle.util.MultiGradleExtension
 
 internal typealias Initializer = Project.() -> Unit
 

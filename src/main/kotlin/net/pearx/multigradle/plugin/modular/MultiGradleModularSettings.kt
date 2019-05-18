@@ -5,7 +5,7 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package ru.pearx.multigradle.plugin.modular
+package net.pearx.multigradle.plugin.modular
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings

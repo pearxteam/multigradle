@@ -1,7 +1,7 @@
 @file:JvmMultifileClass
 @file:JvmName("InitializersKt")
 
-package ru.pearx.multigradle.util.initializers
+package net.pearx.multigradle.util.initializers
 
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*

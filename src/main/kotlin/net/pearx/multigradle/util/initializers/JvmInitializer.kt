@@ -1,15 +1,15 @@
 @file:JvmMultifileClass
 @file:JvmName("InitializersKt")
 
-package ru.pearx.multigradle.util.initializers
+package net.pearx.multigradle.util.initializers
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import ru.pearx.multigradle.util.MultiGradleExtension
-import ru.pearx.multigradle.util.invoke
+import net.pearx.multigradle.util.MultiGradleExtension
+import net.pearx.multigradle.util.invoke
 
 internal fun Project.jvmInitializer() {
     apply<JacocoPlugin>()

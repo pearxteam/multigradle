@@ -1,7 +1,7 @@
 @file:JvmMultifileClass
 @file:JvmName("InitializersKt")
 
-package ru.pearx.multigradle.util.initializers
+package net.pearx.multigradle.util.initializers
 
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
@@ -14,8 +14,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import ru.pearx.multigradle.util.MultiGradleExtension
-import ru.pearx.multigradle.util.invoke
+import net.pearx.multigradle.util.MultiGradleExtension
+import net.pearx.multigradle.util.invoke
 import java.nio.file.Files
 
 internal fun Project.jsInitializer() {

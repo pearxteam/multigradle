@@ -1,4 +1,4 @@
-package ru.pearx.multigradle.util
+package net.pearx.multigradle.util
 
 import kotlin.reflect.KProperty
 

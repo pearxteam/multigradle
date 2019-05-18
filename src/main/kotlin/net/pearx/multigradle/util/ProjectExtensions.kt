@@ -5,7 +5,7 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package ru.pearx.multigradle.util
+package net.pearx.multigradle.util
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler

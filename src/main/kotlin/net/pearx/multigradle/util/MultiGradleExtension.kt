@@ -5,7 +5,7 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package ru.pearx.multigradle.util
+package net.pearx.multigradle.util
 
 import com.moowork.gradle.node.NodeExtension
 import org.gradle.api.JavaVersion

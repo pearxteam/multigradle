@@ -5,6 +5,6 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package ru.pearx.multigradle.plugin
+package net.pearx.multigradle.plugin
 
 const val MULTIGRADLE_EXTENSION_NAME = "multigradle"

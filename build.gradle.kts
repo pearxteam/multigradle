@@ -26,7 +26,7 @@ val pearxRepoUsername: String? by project
 val pearxRepoPassword: String? by project
 val githubAccessToken: String? by project
 
-group = "ru.pearx.multigradle"
+group = "net.pearx.multigradle"
 version = if (devBuildNumber != null) "$projectVersion-dev-$devBuildNumber" else projectVersion
 description = projectDescription.replace("%type%", "modular and simple")
 
@@ -44,10 +44,10 @@ gradlePlugin {
     plugins {
         fun createMultiGradlePlugin(type: String, applicableTo: String) {
             create("multigradle-$type-$applicableTo") {
-                id = "ru.pearx.multigradle.$type.$applicableTo"
+                id = "net.pearx.multigradle.$type.$applicableTo"
                 displayName = "MultiGradle ${type.capitalize()} [${applicableTo.capitalize()}]"
-                description = projectDescription.replace("%type%", type).replace("%applicableTo%", applicableTo)
-                implementationClass = "ru.pearx.multigradle.plugin.$type.MultiGradle${type.capitalize()}${applicableTo.capitalize()}"
+                description = projectDescription.replace("%type%", type)
+                implementationClass = "net.pearx.multigradle.plugin.$type.MultiGradle${type.capitalize()}${applicableTo.capitalize()}"
             }
         }
 
@@ -68,12 +68,12 @@ publishing {
         maven {
             pearxCredentials()
             name = "develop"
-            url = uri("https://repo.pearx.ru/maven2/develop/")
+            url = uri("https://repo.pearx.net/maven2/develop/")
         }
         maven {
             pearxCredentials()
             name = "release"
-            url = uri("https://repo.pearx.ru/maven2/release/")
+            url = uri("https://repo.pearx.net/maven2/release/")
         }
     }
 }
@@ -83,7 +83,7 @@ pluginBundle {
     vcsUrl = "https://github.com/pearxteam/multigradle"
     tags = listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform")
     mavenCoordinates {
-        groupId = "ru.pearx.multigradle"
+        groupId = "net.pearx.multigradle"
     }
 }
 
