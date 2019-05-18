@@ -46,7 +46,7 @@ gradlePlugin {
             create("multigradle-$type-$applicableTo") {
                 id = "ru.pearx.multigradle.$type.$applicableTo"
                 displayName = "MultiGradle ${type.capitalize()} [${applicableTo.capitalize()}]"
-                description = projectDescription.replace("%type%", type)
+                description = projectDescription.replace("%type%", type).replace("%applicableTo%", applicableTo)
                 implementationClass = "ru.pearx.multigradle.plugin.$type.MultiGradle${type.capitalize()}${applicableTo.capitalize()}"
             }
         }
