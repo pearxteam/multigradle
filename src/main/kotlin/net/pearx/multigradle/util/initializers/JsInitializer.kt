@@ -14,6 +14,8 @@ import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.npm.NpmTask
 import com.moowork.gradle.node.task.NodeTask
+import net.pearx.multigradle.util.MultiGradleExtension
+import net.pearx.multigradle.util.invoke
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Sync
@@ -21,8 +23,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import net.pearx.multigradle.util.MultiGradleExtension
-import net.pearx.multigradle.util.invoke
 import java.nio.file.Files
 
 internal fun Project.jsInitializer() {
@@ -102,7 +102,7 @@ internal fun Project.jsInitializer() {
                     try {
                         Files.newDirectoryStream(jsTestCompilation.output.classesDirs.first().toPath()).use { f -> f.iterator().hasNext() }
                     }
-                    catch(e: Exception) {
+                    catch (e: Exception) {
                         false
                     }
                 }

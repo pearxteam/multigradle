@@ -10,6 +10,7 @@
 
 package net.pearx.multigradle.util.initializers
 
+import net.pearx.multigradle.util.MultiGradleExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Sync
@@ -17,7 +18,6 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
-import net.pearx.multigradle.util.MultiGradleExtension
 
 fun Project.preInit() {
     apply<KotlinMultiplatformPluginWrapper>()

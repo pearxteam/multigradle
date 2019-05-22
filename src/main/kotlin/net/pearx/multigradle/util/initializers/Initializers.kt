@@ -10,9 +10,9 @@
 
 package net.pearx.multigradle.util.initializers
 
-import org.gradle.api.Project
 import net.pearx.multigradle.plugin.MULTIGRADLE_EXTENSION_NAME
 import net.pearx.multigradle.util.MultiGradleExtension
+import org.gradle.api.Project
 
 internal typealias Initializer = Project.() -> Unit
 
@@ -24,7 +24,7 @@ internal val initializers: Map<String, Initializer> = mapOf(
 
 internal fun Project.initializeMultiGradle() {
     preInit()
-    for((_, initializer) in initializers) {
+    for ((_, initializer) in initializers) {
         initializer()
     }
     postInit()

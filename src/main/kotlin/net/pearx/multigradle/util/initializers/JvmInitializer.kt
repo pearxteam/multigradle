@@ -10,13 +10,13 @@
 
 package net.pearx.multigradle.util.initializers
 
+import net.pearx.multigradle.util.MultiGradleExtension
+import net.pearx.multigradle.util.invoke
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import net.pearx.multigradle.util.MultiGradleExtension
-import net.pearx.multigradle.util.invoke
 
 internal fun Project.jvmInitializer() {
     apply<JacocoPlugin>()
