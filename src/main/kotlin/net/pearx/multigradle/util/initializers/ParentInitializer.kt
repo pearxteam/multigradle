@@ -15,8 +15,6 @@ import net.pearx.multigradle.util.configureDokka
 import net.pearx.multigradle.util.kotlinMpp
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.plugins.PublishingPlugin
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
@@ -44,13 +42,9 @@ fun Project.preInit() {
 }
 
 fun Project.postInit() {
-    afterEvaluate {
-        configure<PublishingExtension> {
-            publications.withType<MavenPublication> {
-                if (artifacts.none { it.classifier == "javadoc" }) {
-                    artifact(tasks["emptyJavadoc"])
-                }
-            }
+    for (target in kotlinMpp.targets.filterNot { it.name == "jvm" }) {
+        target.mavenPublication {
+            artifact(tasks["emptyJavadoc"])
         }
     }
 
