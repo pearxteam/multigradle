@@ -20,6 +20,7 @@ val projectDescription: String by project
 val projectChangelog: String by project
 val kotlinVersion: String by project
 val nodeVersion: String by project
+val dokkaVersion: String by project
 
 val devBuildNumber: String? by project
 val pearxRepoUsername: String? by project
@@ -38,6 +39,7 @@ repositories {
 dependencies {
     "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     "api"("com.moowork.node:com.moowork.node.gradle.plugin:$nodeVersion")
+    "api"("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
 }
 
 gradlePlugin {

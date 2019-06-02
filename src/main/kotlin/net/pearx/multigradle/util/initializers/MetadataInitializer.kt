@@ -10,12 +10,12 @@
 
 package net.pearx.multigradle.util.initializers
 
+import net.pearx.multigradle.util.kotlinMpp
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 internal fun Project.metadataInitializer() {
-    configure<KotlinMultiplatformExtension> {
+    kotlinMpp {
         sourceSets {
             named("commonMain") {
                 dependencies {

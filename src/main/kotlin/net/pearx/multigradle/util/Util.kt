@@ -7,6 +7,9 @@
 
 package net.pearx.multigradle.util
 
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.dokka.gradle.DokkaTask
 import kotlin.reflect.KProperty
 
 internal class Alias<RECEIVER, FINAL>(
@@ -25,3 +28,27 @@ internal fun <RECEIVER, FINAL> RECEIVER.alias(
     getter: RECEIVER.() -> FINAL,
     setter: RECEIVER.(FINAL) -> Unit
 ) = Alias(this, getter, setter)
+
+internal fun Project.configureDokka(dokka: DokkaTask, outputFormat: String, outputName: String, vararg platformList: String) {
+    with(dokka) {
+        this.outputFormat = outputFormat
+        outputDirectory = "$buildDir/dokka/$outputName"
+        impliedPlatforms = mutableListOf("Common")
+
+        kotlinTasks {
+            listOf()
+        }
+
+        for(platform in mutableListOf("Common").apply { addAll(platformList) }) {
+            sourceRoot {
+                path = kotlinMpp.sourceSets["${platform.toLowerCase()}Main"].kotlin.srcDirs.first().toString()
+                platforms = mutableListOf(platform)
+            }
+        }
+
+        doFirst {
+            val jvmCompilation = kotlinMpp.targets["jvm"].compilations["main"]
+            classpath = jvmCompilation.compileDependencyFiles + jvmCompilation.output.allOutputs
+        }
+    }
+}

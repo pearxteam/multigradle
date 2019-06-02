@@ -13,7 +13,6 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.*
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.memberProperties
@@ -39,7 +38,7 @@ open class MultiGradleExtension(private val project: Project) {
         get() = _javaVersion
         set(value) {
             _javaVersion = value
-            project.the<KotlinMultiplatformExtension>().jvm {
+            project.kotlinMpp.jvm {
                 compilations.configureEach { kotlinOptions.jvmTarget = "1.$value" }
             }
             project.the<JavaPluginConvention>().sourceCompatibility = JavaVersion.toVersion(value)

@@ -16,13 +16,13 @@ import com.moowork.gradle.node.npm.NpmTask
 import com.moowork.gradle.node.task.NodeTask
 import net.pearx.multigradle.util.MultiGradleExtension
 import net.pearx.multigradle.util.invoke
+import net.pearx.multigradle.util.kotlinMpp
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.nio.file.Files
 
 internal fun Project.jsInitializer() {
@@ -39,7 +39,7 @@ internal fun Project.jsInitializer() {
         nodeModulesDir = file("$projectDir/node_modules")
     }
 
-    configure<KotlinMultiplatformExtension> {
+    kotlinMpp {
         js {
             compilations.configureEach {
                 kotlinOptions {
@@ -62,8 +62,8 @@ internal fun Project.jsInitializer() {
     }
 
     tasks {
-        val jsMainCompilation = the<KotlinMultiplatformExtension>().js().compilations["main"]
-        val jsTestCompilation = the<KotlinMultiplatformExtension>().js().compilations["test"]
+        val jsMainCompilation = kotlinMpp.js().compilations["main"]
+        val jsTestCompilation = kotlinMpp.js().compilations["test"]
 
         val jsTestSyncNodeModules by registering(Sync::class) {
             dependsOn(jsTestCompilation.compileKotlinTask, jsMainCompilation.compileKotlinTask)

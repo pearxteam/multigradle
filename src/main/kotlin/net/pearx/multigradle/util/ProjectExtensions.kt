@@ -9,6 +9,8 @@ package net.pearx.multigradle.util
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import java.net.URI
 
@@ -23,6 +25,13 @@ fun RepositoryHandler.kotlinEap() {
 }
 
 inline operator fun <T : KotlinCompilation<*>> T.invoke(block: T.() -> Unit) = block()
+
+val Project.kotlinMpp
+    get() = the<KotlinMultiplatformExtension>()
+
+fun Project.kotlinMpp(block: KotlinMultiplatformExtension.() -> Unit) {
+    configure<KotlinMultiplatformExtension> { block() }
+}
 
 //fun Project.mpdep(notation: String, unnamedPlatform: Platform<*>?): Dependency
 //{
