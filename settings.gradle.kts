@@ -7,11 +7,10 @@
 
 rootProject.name = "multigradle"
 
-val kotlinVersion: String by settings
-val pluginPublishVersion: String by settings
-val githubReleaseVersion: String by settings
-
 pluginManagement {
+    val kotlinVersion: String by settings
+    val pluginPublishVersion: String by settings
+    val githubReleaseVersion: String by settings
     resolutionStrategy {
         eachPlugin {
             if(requested.id.id == "com.gradle.plugin-publish")
