@@ -21,7 +21,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import java.nio.file.Files
 
@@ -91,10 +90,11 @@ internal fun Project.jsInitializer() {
             setEnvironment(mapOf("NODE_PATH" to "$buildDir/kotlinjs", "JUNIT_REPORT_PATH" to "$buildDir/test-results/jsTest/mocha.xml"))
             setArgs(listOf(jsTestCompilation.output.classesDirs.first().toString(), "--reporter", "mocha-jenkins-reporter"))
         }
-
-        named<Test>("jsTest") {
+        
+        named("jsTest") {
             dependsOn(jsTestRunMocha)
         }
+        
 
         listOf<TaskProvider<out Task>>(jsTestRunMocha, jsTestSyncNodeModules, jsTestInstallPackages, named("npmSetup"), named("nodeSetup")).forEach { task ->
             task.configure {

@@ -18,7 +18,6 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.publish.plugins.PublishingPlugin
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaPlugin
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -50,7 +49,7 @@ fun Project.postInit() {
 
     tasks {
         for (target in kotlinMpp.targets.filterNot { it.name == "metadata" }) {
-            val testTask = named<Test>("${target.name}Test") {
+            val testTask = named("${target.name}Test") {
                 finalizedBy("${name}Prefix")
             }
 
