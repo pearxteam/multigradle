@@ -33,22 +33,9 @@ internal fun Project.configureDokka(dokka: DokkaTask, outputFormat: String, outp
     with(dokka) {
         this.outputFormat = outputFormat
         outputDirectory = "$buildDir/dokka/$outputName"
-        impliedPlatforms = mutableListOf("Common")
-
-        kotlinTasks {
-            listOf()
-        }
-
-        for(platform in mutableListOf("Common").apply { addAll(platformList) }) {
-            sourceRoot {
-                path = kotlinMpp.sourceSets["${platform.toLowerCase()}Main"].kotlin.srcDirs.first().toString()
-                platforms = mutableListOf(platform)
-            }
-        }
-
-        doFirst {
-            val jvmCompilation = kotlinMpp.targets["jvm"].compilations["main"]
-            classpath = jvmCompilation.compileDependencyFiles + jvmCompilation.output.allOutputs
+        multiplatform {
+            val jvm by creating {}
+            val js by creating {}
         }
     }
 }
