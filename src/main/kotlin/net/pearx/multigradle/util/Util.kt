@@ -34,8 +34,11 @@ internal fun Project.configureDokka(dokka: DokkaTask, outputFormat: String, outp
         this.outputFormat = outputFormat
         outputDirectory = "$buildDir/dokka/$outputName"
         multiplatform {
-            val jvm by creating {}
-            val js by creating {}
+            for(platform in platformList) {
+                create(platform.toLowerCase()) {
+                    targets = listOf("")
+                }
+            }
         }
     }
 }
