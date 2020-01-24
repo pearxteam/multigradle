@@ -60,10 +60,14 @@ internal fun Project.jvmInitializer() {
         }
     }
 
-    tasks {
-        named<Test>("jvmTest") {
-            @Suppress("UnstableApiUsage")
-            useJUnitPlatform()
+    afterEvaluate {
+        tasks {
+            named<Test>("jvmTest") {
+                useJUnitPlatform()
+                reports {
+                    junitXml.isEnabled = true
+                }
+            }
         }
     }
 }
