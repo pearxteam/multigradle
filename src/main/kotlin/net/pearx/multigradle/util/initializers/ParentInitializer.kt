@@ -29,6 +29,8 @@ fun Project.preInit() {
     apply<BasePlugin>()
     apply<PublishingPlugin>()
 
+    extra.set("kotlin.tests.individualTaskReports", "false") // hack until https://youtrack.jetbrains.com/issue/KT-35202 is fixed
+
     repositories {
         jcenter()
     }

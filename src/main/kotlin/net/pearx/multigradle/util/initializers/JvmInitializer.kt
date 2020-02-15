@@ -62,10 +62,7 @@ internal fun Project.jvmInitializer() {
 
     tasks {
         named<Test>("jvmTest") {
-            // hack until https://youtrack.jetbrains.com/issue/KT-35202 is fixed
-            doFirst {
-                reports.junitXml.isEnabled = true
-            }
+            reports.junitXml.isEnabled = true
             useJUnitPlatform()
         }
     }
