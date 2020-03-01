@@ -20,7 +20,14 @@ class MultiGradleModularSettings : Plugin<Settings> {
             val root = rootDir.toPath()
             for (modulePath in Files.newDirectoryStream(root.resolve("modules"))) {
                 if (Files.isDirectory(modulePath)) {
-                    val proj = ":modules:${rootProject.name}-${modulePath.fileName}"
+                    val proj = buildString {
+                        append(":modules:")
+                        append(rootProject.name)
+                        if(modulePath.fileName.toString() != "main") {
+                            append('-')
+                            append(modulePath.fileName)
+                        }
+                    }
                     include(proj)
                     val projDir = modulePath.toFile()
                     project(proj).projectDir = projDir
