@@ -31,6 +31,7 @@ open class MultiGradleExtension(private val project: Project) {
     }
 
     fun <T : PlatformConfig> platform(platform: Platform<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return platformConfigs[platform] as T
     }
 
