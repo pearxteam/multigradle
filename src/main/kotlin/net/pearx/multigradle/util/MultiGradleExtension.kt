@@ -48,9 +48,9 @@ open class MultiGradleExtension(private val project: Project) {
     }
 
     internal fun setupFromProperties() {
-        setupFromProperties("multigradle:")
+        setupFromProperties("multigradle/")
         for((platform, config) in platformConfigs) {
-            config.setupFromProperties("${platform.name}:")
+            config.setupFromProperties("${platform.name}/")
         }
     }
 }
