@@ -7,67 +7,50 @@
 
 package net.pearx.multigradle.util
 
-import com.moowork.gradle.node.NodeExtension
-import org.gradle.api.JavaVersion
+import net.pearx.multigradle.util.platform.Platform
+import net.pearx.multigradle.util.platform.PlatformConfig
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.*
-import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.createType
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.typeOf
 
 
 /*
  * Created by mrAppleXZ on 01.09.18.
  */
 open class MultiGradleExtension(private val project: Project) {
-    //region COMMON
-    var projectVersion: String by project.alias({ version.toString() }, Project::setVersion)
+    var projectVersion: String by project.alias<Project, String>({ version.toString() }, Project::setVersion)
     var createPrefixedTestResults = true
-    //endregion
 
-    //region JVM
-    lateinit var junitJupiterVersion: String
+    private val platformConfigs = hashMapOf<Platform<*>, PlatformConfig>()
 
-    var jacocoVersion: String by project.the<JacocoPluginExtension>().alias(JacocoPluginExtension::getToolVersion, JacocoPluginExtension::setToolVersion)
-
-    private lateinit var _javaVersion: String
-    var javaVersion: String
-        get() = _javaVersion
-        set(value) {
-            _javaVersion = value
-            project.kotlinMpp.jvm {
-                compilations.configureEach { kotlinOptions.jvmTarget = "1.$value" }
-            }
-            project.the<JavaPluginConvention>().sourceCompatibility = JavaVersion.toVersion(value)
-        }
-    //endregion
-
-    //region JS
-    var nodeJsVersion: String by project.the<NodeExtension>().alias(NodeExtension::getVersion, NodeExtension::setVersion)
-    var npmVersion: String by project.the<NodeExtension>().alias(NodeExtension::getNpmVersion, NodeExtension::setNpmVersion)
-    lateinit var mochaVersion: String
-    lateinit var mochaJunitReporterVersion: String
-    var npmPackages = mutableMapOf<String, String>()
-
-    inline fun npmPackages(init: MutableMap<String, String>.() -> Unit) {
-        init(npmPackages)
+    inline fun <reified T : PlatformConfig> platform(platform: Platform<T>, block: T.() -> Unit) {
+        platform(platform).apply(block)
     }
-    //endregion
 
-    fun load(project: Project): MultiGradleExtension {
-        val stringType = String::class.createType()
-        for (property in this::class.memberProperties) {
-            for ((key, value) in project.properties) {
-                if (property.name == key && property is KMutableProperty<*> && property.returnType == stringType) {
-                    property.isAccessible = true
-                    @Suppress("UNCHECKED_CAST")
-                    (property as KMutableProperty<String>).setter.call(this, value)
-                }
-            }
+    fun <T : PlatformConfig> platform(platform: Platform<T>): T {
+        return platformConfigs[platform] as T
+    }
+
+    internal fun <T : PlatformConfig> initPlatform(platform: Platform<T>) {
+        platformConfigs[platform] = platform.createConfig(project)
+    }
+
+    private fun Any.setupFromProperties(prefix: String) {
+        val props = this::class.memberProperties.filter { it is KMutableProperty<*> && it.returnType == typeOf<String>() && (project.hasProperty("$prefix${it.name}") || project.hasProperty(it.name)) }
+        for(prop in props) {
+            prop.isAccessible = true
+            val value = if(project.hasProperty("$prefix${prop.name}")) project.properties["$prefix${prop.name}"] else project.properties[prop.name]
+            (prop as KMutableProperty<*>).setter.call(this, value)
         }
-        return this
+    }
+
+    internal fun setupFromProperties() {
+        setupFromProperties("multigradle:")
+        for((platform, config) in platformConfigs) {
+            config.setupFromProperties("${platform.name}:")
+        }
     }
 }

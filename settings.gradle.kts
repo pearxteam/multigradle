@@ -11,12 +11,9 @@ pluginManagement {
     val kotlinVersion: String by settings
     val pluginPublishVersion: String by settings
     val githubReleaseVersion: String by settings
-    resolutionStrategy {
-        eachPlugin {
-            if(requested.id.id == "com.gradle.plugin-publish")
-                useVersion(pluginPublishVersion)
-            if(requested.id.id.startsWith("com.github.breadmoirai.github-release"))
-                useVersion(githubReleaseVersion)
-        }
+    plugins {
+        kotlin("jvm") version kotlinVersion
+        id("com.gradle.plugin-publish") version pluginPublishVersion
+        id("com.github.breadmoirai.github-release") version githubReleaseVersion
     }
 }

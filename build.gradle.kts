@@ -6,13 +6,14 @@
  */
 
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-gradle-plugin`
-    `kotlin-dsl`
     `maven-publish`
     id("com.gradle.plugin-publish")
     id("com.github.breadmoirai.github-release")
+    `kotlin-dsl`
 }
 
 val projectVersion: String by project
@@ -98,6 +99,10 @@ configure<GithubReleaseExtension> {
 }
 
 tasks {
+    withType<KotlinCompile>().all {
+        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.ExperimentalStdlibApi"
+    }
+
     register("publishDevelop") {
         group = "publishing"
         dependsOn(withType<PublishToMavenRepository>().matching { it.repository == publishing.repositories["develop"] })

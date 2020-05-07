@@ -1,27 +1,34 @@
-/*
- * Copyright © 2019 mrAppleXZ
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at https://mozilla.org/MPL/2.0/.
- */
+package net.pearx.multigradle.util.platform
 
-@file:JvmMultifileClass
-@file:JvmName("InitializersKt")
-
-package net.pearx.multigradle.util.initializers
-
-import net.pearx.multigradle.util.MultiGradleExtension
-import net.pearx.multigradle.util.configureDokka
-import net.pearx.multigradle.util.invoke
-import net.pearx.multigradle.util.kotlinMpp
+import net.pearx.multigradle.util.*
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
+import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 
-internal fun Project.jvmInitializer() {
+class JvmPlatformConfig(project: Project) : PlatformConfig(project) {
+    lateinit var junitJupiterVersion: String
+
+    var jacocoVersion: String by project.the<JacocoPluginExtension>().alias(JacocoPluginExtension::getToolVersion, JacocoPluginExtension::setToolVersion)
+
+    private lateinit var _javaVersion: String
+    var javaVersion: String
+        get() = _javaVersion
+        set(value) {
+            _javaVersion = value
+            project.kotlinMpp.jvm {
+                compilations.configureEach { kotlinOptions.jvmTarget = "1.$value" }
+            }
+            project.the<JavaPluginConvention>().sourceCompatibility = JavaVersion.toVersion(value)
+        }
+}
+
+val JvmPlatform = platform("jvm", { JvmPlatformConfig(it) }) { ext ->
     apply<JacocoPlugin>()
 
     val dokkaJavadoc by tasks.registering(DokkaTask::class) {
@@ -37,14 +44,12 @@ internal fun Project.jvmInitializer() {
     kotlinMpp {
         jvm {
             afterEvaluate {
-                val extension = project.the<MultiGradleExtension>()
-
                 compilations["main"] {
                     mavenPublication {
                         artifact(javadocJar.get())
                     }
                     dependencies {
-                        implementation(kotlin("stdlib-jdk${extension.javaVersion}"))
+                        implementation(kotlin("stdlib-jdk${ext().javaVersion}"))
                     }
                 }
 
@@ -52,8 +57,8 @@ internal fun Project.jvmInitializer() {
                     dependencies {
                         implementation(kotlin("test-annotations-common"))
                         implementation(kotlin("test-junit5"))
-                        implementation("org.junit.jupiter:junit-jupiter-api:${extension.junitJupiterVersion}")
-                        runtimeOnly("org.junit.jupiter:junit-jupiter-engine:${extension.junitJupiterVersion}")
+                        implementation("org.junit.jupiter:junit-jupiter-api:${ext().junitJupiterVersion}")
+                        runtimeOnly("org.junit.jupiter:junit-jupiter-engine:${ext().junitJupiterVersion}")
                     }
                 }
             }

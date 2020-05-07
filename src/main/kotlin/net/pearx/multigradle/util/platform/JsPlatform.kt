@@ -1,20 +1,10 @@
-/*
- * Copyright © 2019 mrAppleXZ
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at https://mozilla.org/MPL/2.0/.
- */
-
-@file:JvmMultifileClass
-@file:JvmName("InitializersKt")
-
-package net.pearx.multigradle.util.initializers
+package net.pearx.multigradle.util.platform
 
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.npm.NpmTask
 import com.moowork.gradle.node.task.NodeTask
-import net.pearx.multigradle.util.MultiGradleExtension
+import net.pearx.multigradle.util.alias
 import net.pearx.multigradle.util.invoke
 import net.pearx.multigradle.util.kotlinMpp
 import org.gradle.api.Project
@@ -24,7 +14,19 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import java.nio.file.Files
 
-internal fun Project.jsInitializer() {
+class JsPlatformConfig(project: Project) : PlatformConfig(project) {
+    var nodeJsVersion: String by project.the<NodeExtension>().alias(NodeExtension::getVersion, NodeExtension::setVersion)
+    var npmVersion: String by project.the<NodeExtension>().alias(NodeExtension::getNpmVersion, NodeExtension::setNpmVersion)
+    lateinit var mochaVersion: String
+    lateinit var mochaJunitReporterVersion: String
+    var npmPackages = mutableMapOf<String, String>()
+
+    inline fun npmPackages(init: MutableMap<String, String>.() -> Unit) {
+        init(npmPackages)
+    }
+}
+
+val JsPlatform = platform("js", { JsPlatformConfig(it) }) { ext ->
     apply<NodePlugin>()
 
     configure<NodeExtension> {
@@ -75,10 +77,10 @@ internal fun Project.jsInitializer() {
             doFirst {
                 setArgs(mutableListOf(
                     "install",
-                    "mocha@${project.the<MultiGradleExtension>().mochaVersion}",
-                    "mocha-jenkins-reporter@${project.the<MultiGradleExtension>().mochaJunitReporterVersion}")
+                    "mocha@${ext().mochaVersion}",
+                    "mocha-jenkins-reporter@${ext().mochaJunitReporterVersion}")
                     .apply {
-                        for ((name, version) in project.the<MultiGradleExtension>().npmPackages)
+                        for ((name, version) in ext().npmPackages)
                             add("$name@$version")
                     })
             }
@@ -90,11 +92,11 @@ internal fun Project.jsInitializer() {
             setEnvironment(mapOf("NODE_PATH" to "$buildDir/kotlinjs", "JUNIT_REPORT_PATH" to "$buildDir/test-results/jsTest/mocha.xml"))
             setArgs(listOf(jsTestCompilation.output.classesDirs.first().toString(), "--reporter", "mocha-jenkins-reporter"))
         }
-        
+
         named("jsTest") {
             dependsOn(jsTestRunMocha)
         }
-        
+
 
         listOf<TaskProvider<out Task>>(jsTestRunMocha, jsTestSyncNodeModules, jsTestInstallPackages, named("npmSetup"), named("nodeSetup")).forEach { task ->
             task.configure {

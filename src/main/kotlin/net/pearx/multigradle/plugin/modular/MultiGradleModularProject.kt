@@ -7,7 +7,7 @@
 
 package net.pearx.multigradle.plugin.modular
 
-import net.pearx.multigradle.util.initializers.initializeMultiGradle
+import net.pearx.multigradle.plugin.initializeMultiGradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
