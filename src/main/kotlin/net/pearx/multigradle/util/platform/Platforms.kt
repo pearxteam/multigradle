@@ -6,15 +6,17 @@ import org.gradle.kotlin.dsl.*
 
 interface Platform<T : PlatformConfig> {
     val name: String
+    val testTasks: List<String>
     fun initialize(project: Project)
     fun createConfig(project: Project): T
 }
 
 open class PlatformConfig(val project: Project)
 
-inline fun <T : PlatformConfig> platform(name: String, crossinline config: (Project) -> T, crossinline initializer: Project.(() -> T) -> Unit): Platform<T> = object : Platform<T> {
-    override val name: String
-        get() = name
+inline fun <T : PlatformConfig> platform(name: String, testTasks: List<String>, crossinline config: (Project) -> T, crossinline initializer: Project.(() -> T) -> Unit): Platform<T> = object : Platform<T> {
+    override val name: String = name
+
+    override val testTasks: List<String> = testTasks
 
     override fun initialize(project: Project) {
         project.initializer { project.the<MultiGradleExtension>().platform(this) }
@@ -37,4 +39,4 @@ inline fun <T : PlatformConfig> platform(name: String, crossinline config: (Proj
     }
 }
 
-val PLATFORMS = setOf(JsPlatform, JvmPlatform).associateBy { it.name }
+val PLATFORMS = setOf(JsPlatform, JvmPlatform, AndroidPlatform).associateBy { p -> p.name }

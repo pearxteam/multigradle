@@ -26,7 +26,7 @@ class JsPlatformConfig(project: Project) : PlatformConfig(project) {
     }
 }
 
-val JsPlatform = platform("js", { JsPlatformConfig(it) }) { ext ->
+val JsPlatform = platform("js", listOf("jsTest"), { JsPlatformConfig(it) }) { ext ->
     apply<NodePlugin>()
 
     configure<NodeExtension> {

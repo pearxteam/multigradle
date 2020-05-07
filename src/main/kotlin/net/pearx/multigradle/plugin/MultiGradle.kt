@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 
 const val MULTIGRADLE_EXTENSION_NAME = "multigradle"
 
+internal fun Project.enabledPlatforms() = (properties["enabledPlatforms"]?.toString()?.split(',')?.toSet() ?: PLATFORMS.keys).map { PLATFORMS[it] ?: throw NoSuchElementException("No such platform '$name'") }
+
 internal fun Project.initializeMultiGradle() {
     preInit()
     val ext = MultiGradleExtension(this)
     extensions.add(MULTIGRADLE_EXTENSION_NAME, ext)
-    val enabledPlatforms = properties["enabledPlatforms"]?.toString()?.split(',')?.toSet() ?: PLATFORMS.keys
-    for (name in enabledPlatforms) {
-        val platform = PLATFORMS[name] ?: throw NoSuchElementException("No such platform '$name'")
+    for (platform in enabledPlatforms()) {
         platform.initialize(this)
         ext.initPlatform(platform)
     }
@@ -81,21 +81,22 @@ private fun Project.postInit() {
     }
 
     tasks {
-        for (target in kotlinMpp.targets.filterNot { it.name == "metadata" }) {
-            val testTask = named("${target.name}Test") {
-                finalizedBy("${name}Prefix")
-            }
+        afterEvaluate {
+            for (testTaskName in enabledPlatforms().flatMap { it.testTasks }) {
+                val testTask = named(testTaskName) {
+                    finalizedBy("${name}Prefix")
+                }
 
-            create<Sync>("${testTask.name}Prefix") {
-                onlyIf { project.the<MultiGradleExtension>().createPrefixedTestResults }
-                val sourceSetName = target.compilations["test"].defaultSourceSet.name
-                from("$buildDir/test-results/$sourceSetName")
-                into("$buildDir/test-results-prefixed/$sourceSetName")
-                include("**/*.xml")
-                // todo: make filtering not just string replacing
-                filter { line ->
-                    line.replace(Regex("testsuite name=\"(.+?)\""), "testsuite name=\"${target.name} $1\"")
-                    line.replace(Regex("classname=\"(.+?)\""), "classname=\"${target.name} $1\"")
+                create<Sync>("${testTask.name}Prefix") {
+                    onlyIf { project.the<MultiGradleExtension>().createPrefixedTestResults }
+                    from("$buildDir/test-results/$testTaskName")
+                    into("$buildDir/test-results-prefixed/$testTaskName")
+                    include("**/*.xml")
+                    // todo: make filtering not just string replacing
+                    filter { line ->
+                        line.replace(Regex("testsuite name=\"(.+?)\""), "testsuite name=\"$testTaskName $1\"")
+                        line.replace(Regex("classname=\"(.+?)\""), "classname=\"$testTaskName $1\"")
+                    }
                 }
             }
         }

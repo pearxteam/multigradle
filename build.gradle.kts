@@ -22,6 +22,7 @@ val projectChangelog: String by project
 val kotlinVersion: String by project
 val nodeVersion: String by project
 val dokkaVersion: String by project
+val androidBuildToolsVersion: String by project
 
 val devBuildNumber: String? by project
 val pearxRepoUsername: String? by project
@@ -34,6 +35,7 @@ description = projectDescription.replace("%type%", "modular and simple")
 
 repositories {
     jcenter()
+    google()
     gradlePluginPortal()
 }
 
@@ -41,6 +43,7 @@ dependencies {
     "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     "api"("com.github.node-gradle:gradle-node-plugin:$nodeVersion")
     "api"("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+    "api"("com.android.tools.build:gradle:$androidBuildToolsVersion")
 }
 
 gradlePlugin {

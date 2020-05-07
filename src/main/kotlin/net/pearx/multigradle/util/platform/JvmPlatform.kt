@@ -28,7 +28,7 @@ class JvmPlatformConfig(project: Project) : PlatformConfig(project) {
         }
 }
 
-val JvmPlatform = platform("jvm", { JvmPlatformConfig(it) }) { ext ->
+val JvmPlatform = platform("jvm", listOf("jvmTest"), { JvmPlatformConfig(it) }) { ext ->
     apply<JacocoPlugin>()
 
     val dokkaJavadoc by tasks.registering(DokkaTask::class) {
