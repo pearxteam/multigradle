@@ -1,0 +1,30 @@
+name: test
+
+on:
+  push, pull_request
+jobs:
+  linux:
+    name: Test on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Tests
+        run: ./gradlew --no-daemon check
+  macos:
+    name: Test on macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Tests
+        run: ./gradlew --no-daemon check
+  windows:
+    name: Test on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Tests
+        run: CALL gradlew.bat --no-daemon check
+        shell: cmd
