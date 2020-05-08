@@ -1,4 +1,4 @@
-name: master
+name: Test & Deploy | master
 
 on:
   push:
