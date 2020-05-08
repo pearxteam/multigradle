@@ -14,32 +14,32 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
-          with:
-            path: ~/.gradle
-            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-            restore-keys: |
-              ${{ runner.os }}-gradle-
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - run: ./gradlew --no-daemon check
   macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
-          with:
-            path: ~/.gradle
-            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-            restore-keys: |
-              ${{ runner.os }}-gradle-
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - run: ./gradlew --no-daemon check
   windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
-          with:
-            path: ~/.gradle
-            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-            restore-keys: |
-              ${{ runner.os }}-gradle-
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - run: CALL gradlew.bat --no-daemon check
         shell: cmd
