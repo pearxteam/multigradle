@@ -5,24 +5,22 @@ on:
     branches:
       - "develop"
 jobs:
-  skip:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
   check_macos:
     runs-on: macos-latest
-    needs: skip
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
       - uses: actions/checkout@v2
       - run: ./gradlew --no-daemon check
   check_windows:
     runs-on: windows-latest
-    needs: skip
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
       - uses: actions/checkout@v2
       - run: CALL gradlew.bat --no-daemon check
         shell: cmd
   check_deploy_linux:
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     needs: [check_macos, check_windows]
     steps:
       - uses: actions/checkout@v2
