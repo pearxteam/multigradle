@@ -1,0 +1,44 @@
+name: master
+
+on:
+  push:
+    branches:
+      - "master"
+jobs:
+  check_macos:
+    runs-on: macos-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - run: ./gradlew --no-daemon check
+  check_windows:
+    runs-on: windows-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - run: CALL gradlew.bat --no-daemon check
+        shell: cmd
+  check_deploy_linux:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - run: ./gradlew --no-daemon publishRelease -PpearxRepoUsername=${{ secrets.PEARX_REPO_USERNAME }} -PpearxRepoPassword=${{ secrets.PEARX_REPO_PASSWORD }} -PgithubAccessToken=${{ secrets._GITHUB_RELEASE_TOKEN }} -Pgradle.publish.key=${{ secrets.GRADLE_PUBLISH_KEY }} -Pgradle.publish.secret=${{ secrets.GRADLE_PUBLISH_SECRET }}
