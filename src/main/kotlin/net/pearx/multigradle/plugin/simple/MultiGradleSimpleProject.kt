@@ -11,9 +11,6 @@ import net.pearx.multigradle.plugin.initializeMultiGradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-/*
- * Created by mrAppleXZ on 06.09.18.
- */
 class MultiGradleSimpleProject : Plugin<Project> {
     override fun apply(target: Project) {
         target.initializeMultiGradle()

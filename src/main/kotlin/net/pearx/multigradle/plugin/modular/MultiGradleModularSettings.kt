@@ -11,9 +11,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import java.nio.file.Files
 
-/*
- * Created by mrAppleXZ on 31.08.18.
- */
 class MultiGradleModularSettings : Plugin<Settings> {
     override fun apply(target: Settings) {
         with(target) {

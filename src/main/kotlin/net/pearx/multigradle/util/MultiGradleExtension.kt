@@ -16,10 +16,6 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.typeOf
 
-
-/*
- * Created by mrAppleXZ on 01.09.18.
- */
 open class MultiGradleExtension(private val project: Project) {
     var projectVersion: String by project.alias<Project, String>({ version.toString() }, Project::setVersion)
     var createPrefixedTestResults = true
