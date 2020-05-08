@@ -1,0 +1,27 @@
+name: check_only
+
+on:
+  push:
+    branches-ignore:
+      - 'develop'
+      - 'master'
+    tags-ignore:
+      - '**'
+  pull_request:
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: ./gradlew --no-daemon check
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: ./gradlew --no-daemon check
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: CALL gradlew.bat --no-daemon check
+        shell: cmd
