@@ -24,4 +24,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: ./gradlew --no-daemon check
-      - run: ./gradlew --no-daemon publishDevelop -PdevBuildNumber='$GITHUB_RUN_NUMBER' -PpearxRepoUsername='${{ secrets.PEARX_REPO_USERNAME }}' -PpearxRepoPassword='${{ secrets.PEARX_REPO_PASSWORD }}'
+      - run: ./gradlew --no-daemon publishDevelop -PdevBuildNumber=${GITHUB_RUN_NUMBER} -PpearxRepoUsername=${{ secrets.PEARX_REPO_USERNAME }} -PpearxRepoPassword=${{ secrets.PEARX_REPO_PASSWORD }}
