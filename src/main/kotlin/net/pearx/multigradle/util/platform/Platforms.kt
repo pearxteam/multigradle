@@ -8,6 +8,7 @@
 package net.pearx.multigradle.util.platform
 
 import net.pearx.multigradle.util.MultiGradleExtension
+import net.pearx.multigradle.util.kotlinMpp
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 
@@ -46,4 +47,33 @@ inline fun <T : PlatformConfig> platform(name: String, testTasks: List<String>, 
     }
 }
 
-val PLATFORMS = setOf(JsPlatform, JvmPlatform, AndroidPlatform).associateBy { p -> p.name }
+fun nativePlatform(name: String, test: Boolean = false) = platform(name, if(test) listOf("${name}Test") else listOf(), { PlatformConfig(it) }) {
+    kotlinMpp {
+        targetFromPreset(presets[name])
+    }
+}
+
+val PLATFORMS = setOf(
+    JsPlatform,
+    JvmPlatform,
+    AndroidPlatform,
+    LinuxX64Platform,
+    LinuxArm64Platform,
+    LinuxArm32HfpPlatform,
+    LinuxMips32Platform,
+    LinuxMipsel32Platform,
+    AndroidNativeArm32Platform,
+    AndroidNativeArm64Platform,
+    TvOsArm32Platform,
+    TvOsX64Platform,
+    IOsArm32Platform,
+    IOsArm64Platform,
+    IOsX64Platform,
+    WatchOsArm32Platform,
+    WatchOsArm64Platform,
+    WatchOsX86Platform,
+    MacOsX64Platform,
+    MingwX86Platform,
+    MingwX64Platform,
+    Wasm32Platform
+).associateBy { p -> p.name }
