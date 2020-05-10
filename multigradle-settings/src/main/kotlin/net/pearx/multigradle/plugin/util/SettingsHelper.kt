@@ -5,16 +5,15 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package net.pearx.multigradle.plugin.simple
+package net.pearx.multigradle.plugin.util
 
-import net.pearx.multigradle.plugin.util.setupRepos
-import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
-class MultiGradleSimpleSettings : Plugin<Settings> {
-    override fun apply(target: Settings) {
-        with(target) {
-            setupRepos()
+internal fun Settings.setupRepos() {
+    pluginManagement {
+        repositories {
+            gradlePluginPortal()
+            google()
         }
     }
 }

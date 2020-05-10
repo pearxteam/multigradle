@@ -7,6 +7,7 @@
 
 package net.pearx.multigradle.plugin.modular
 
+import net.pearx.multigradle.plugin.util.setupRepos
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import java.nio.file.Files
@@ -14,12 +15,7 @@ import java.nio.file.Files
 class MultiGradleModularSettings : Plugin<Settings> {
     override fun apply(target: Settings) {
         with(target) {
-            pluginManagement {
-                repositories {
-                    gradlePluginPortal()
-                    google()
-                }
-            }
+            setupRepos()
             val root = rootDir.toPath()
             for (modulePath in Files.newDirectoryStream(root.resolve("modules"))) {
                 if (Files.isDirectory(modulePath)) {
