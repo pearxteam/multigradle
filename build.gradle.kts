@@ -86,6 +86,7 @@ subprojects {
         }
         register("publishRelease") {
             group = "publishing"
+            dependsOn(named("publishPlugins"))
             dependsOn(withType<PublishToMavenRepository>().matching { it.repository == project.the<PublishingExtension>().repositories["release"] })
         }
     }
