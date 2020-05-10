@@ -14,6 +14,12 @@ import java.nio.file.Files
 class MultiGradleModularSettings : Plugin<Settings> {
     override fun apply(target: Settings) {
         with(target) {
+            pluginManagement {
+                repositories {
+                    gradlePluginPortal()
+                    google()
+                }
+            }
             val root = rootDir.toPath()
             for (modulePath in Files.newDirectoryStream(root.resolve("modules"))) {
                 if (Files.isDirectory(modulePath)) {

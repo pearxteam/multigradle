@@ -1,19 +1,12 @@
-/*
- * Copyright © 2019 mrAppleXZ
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at https://mozilla.org/MPL/2.0/.
- */
-
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
+import com.gradle.publish.PluginBundleExtension
+import com.gradle.publish.PublishPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `java-gradle-plugin`
-    `maven-publish`
-    id("com.gradle.plugin-publish")
+    id("com.gradle.plugin-publish") apply false
     id("com.github.breadmoirai.github-release")
-    `kotlin-dsl`
+    `kotlin-dsl` apply false
 }
 
 val projectVersion: String by project
@@ -29,67 +22,102 @@ val pearxRepoUsername: String? by project
 val pearxRepoPassword: String? by project
 val githubAccessToken: String? by project
 
-group = "net.pearx.multigradle"
-version = if (devBuildNumber != null) "$projectVersion-dev-$devBuildNumber" else projectVersion
-description = projectDescription.replace("%type%", "modular and simple")
-
-repositories {
-    jcenter()
-    google()
-    gradlePluginPortal()
-}
-
-dependencies {
-    "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    "api"("com.github.node-gradle:gradle-node-plugin:$nodeVersion")
-    "api"("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
-    "api"("com.android.tools.build:gradle:$androidBuildToolsVersion")
-}
-
-gradlePlugin {
-    plugins {
-        fun createMultiGradlePlugin(type: String, applicableTo: String) {
-            create("multigradle-$type-$applicableTo") {
-                id = "net.pearx.multigradle.$type.$applicableTo"
-                displayName = "MultiGradle ${type.capitalize()} [${applicableTo.capitalize()}]"
-                description = projectDescription.replace("%type%", type)
-                implementationClass = "net.pearx.multigradle.plugin.$type.MultiGradle${type.capitalize()}${applicableTo.capitalize()}"
-            }
-        }
-
-        createMultiGradlePlugin("modular", "settings")
-        createMultiGradlePlugin("modular", "project")
-        createMultiGradlePlugin("simple", "project")
+fun NamedDomainObjectContainer<PluginDeclaration>.createMultiGradlePlugin(type: String, applicableTo: String) {
+    create("multigradle-$type-$applicableTo") {
+        id = "net.pearx.multigradle.$type.$applicableTo"
+        displayName = "MultiGradle ${type.capitalize()} [${applicableTo.capitalize()}]"
+        description = projectDescription.replace("%type%", type)
+        implementationClass = "net.pearx.multigradle.plugin.$type.MultiGradle${type.capitalize()}${applicableTo.capitalize()}"
     }
 }
 
-publishing {
+subprojects {
+    apply<KotlinDslPlugin>()
+    apply<MavenPublishPlugin>()
+    apply<JavaGradlePluginPlugin>()
+    apply<PublishPlugin>()
+
+    group = "net.pearx.multigradle"
+    version = if (devBuildNumber != null) "$projectVersion-dev-$devBuildNumber" else projectVersion
+    description = projectDescription.replace("%type%", "modular and simple")
+
     repositories {
-        fun AuthenticationSupported.pearxCredentials() {
-            credentials {
-                username = pearxRepoUsername
-                password = pearxRepoPassword
+        jcenter()
+        gradlePluginPortal()
+    }
+
+    configure<PublishingExtension> {
+        repositories {
+            fun AuthenticationSupported.pearxCredentials() {
+                credentials {
+                    username = pearxRepoUsername
+                    password = pearxRepoPassword
+                }
+            }
+            maven {
+                pearxCredentials()
+                name = "develop"
+                url = uri("https://repo.pearx.net/maven2/develop/")
+            }
+            maven {
+                pearxCredentials()
+                name = "release"
+                url = uri("https://repo.pearx.net/maven2/release/")
             }
         }
-        maven {
-            pearxCredentials()
-            name = "develop"
-            url = uri("https://repo.pearx.net/maven2/develop/")
+    }
+
+    configure<PluginBundleExtension> {
+        website = "https://github.com/pearxteam/multigradle"
+        vcsUrl = "https://github.com/pearxteam/multigradle"
+        tags = listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform")
+        mavenCoordinates {
+            groupId = "net.pearx.multigradle"
         }
-        maven {
-            pearxCredentials()
-            name = "release"
-            url = uri("https://repo.pearx.net/maven2/release/")
+    }
+
+    tasks {
+        register("publishDevelop") {
+            group = "publishing"
+            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == the<PublishingExtension>().repositories["develop"] })
+        }
+        register("publishRelease") {
+            group = "publishing"
+            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == the<PublishingExtension>().repositories["release"] })
         }
     }
 }
 
-pluginBundle {
-    website = "https://github.com/pearxteam/multigradle"
-    vcsUrl = "https://github.com/pearxteam/multigradle"
-    tags = listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform")
-    mavenCoordinates {
-        groupId = "net.pearx.multigradle"
+project(":multigradle") {
+    repositories {
+        google()
+    }
+
+    dependencies {
+        "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        "api"("com.github.node-gradle:gradle-node-plugin:$nodeVersion")
+        "api"("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+        "api"("com.android.tools.build:gradle:$androidBuildToolsVersion")
+    }
+
+    configure<GradlePluginDevelopmentExtension> {
+        plugins {
+            createMultiGradlePlugin("modular", "project")
+            createMultiGradlePlugin("simple", "project")
+        }
+    }
+
+    tasks.withType<KotlinCompile>().all {
+        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.ExperimentalStdlibApi"
+    }
+}
+
+project(":multigradle-settings") {
+    configure<GradlePluginDevelopmentExtension> {
+        plugins {
+            createMultiGradlePlugin("modular", "settings")
+            createMultiGradlePlugin("simple", "settings")
+        }
     }
 }
 
@@ -102,18 +130,11 @@ configure<GithubReleaseExtension> {
 }
 
 tasks {
-    withType<KotlinCompile>().all {
-        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.ExperimentalStdlibApi"
-    }
-
     register("publishDevelop") {
         group = "publishing"
-        dependsOn(withType<PublishToMavenRepository>().matching { it.repository == publishing.repositories["develop"] })
     }
     register("publishRelease") {
         group = "publishing"
-        dependsOn(withType<PublishToMavenRepository>().matching { it.repository == publishing.repositories["release"] })
         dependsOn(named("githubRelease"))
-        dependsOn(named("publishPlugins"))
     }
 }
