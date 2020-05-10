@@ -38,7 +38,7 @@ repositories {
     google()
     gradlePluginPortal()
 }
-
+println("TEST")
 dependencies {
     "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     "api"("com.github.node-gradle:gradle-node-plugin:$nodeVersion")
