@@ -79,11 +79,11 @@ subprojects {
     tasks {
         register("publishDevelop") {
             group = "publishing"
-            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == the<PublishingExtension>().repositories["develop"] })
+            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == project.the<PublishingExtension>().repositories["develop"] })
         }
         register("publishRelease") {
             group = "publishing"
-            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == the<PublishingExtension>().repositories["release"] })
+            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == project.the<PublishingExtension>().repositories["release"] })
         }
     }
 }
