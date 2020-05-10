@@ -13,6 +13,7 @@ import net.pearx.multigradle.util.kotlinMpp
 import net.pearx.multigradle.util.platform.PLATFORMS
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.plugins.PublishingPlugin
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
@@ -20,10 +21,13 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaPlugin
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.presetName
 
 const val MULTIGRADLE_EXTENSION_NAME = "multigradle"
 
-internal fun Project.enabledPlatforms() = (properties["enabledPlatforms"]?.toString()?.split(',')?.toSet() ?: PLATFORMS.keys).map { PLATFORMS[it] ?: throw NoSuchElementException("No such platform '$name'") }
+internal fun Project.enabledPlatforms() = (properties["enabledPlatforms"]?.toString()?.split(',')?.toSet()
+    ?: PLATFORMS.keys).map { PLATFORMS[it] ?: throw NoSuchElementException("No such platform '$name'") }
 
 internal fun Project.initializeMultiGradle() {
     preInit()
@@ -73,10 +77,25 @@ private fun Project.preInit() {
     }
 }
 
+private val TARGETS_BY_PRESET = HostManager().targets.mapKeys { it.value.presetName }
 private fun Project.postInit() {
     for (target in kotlinMpp.targets.filterNot { it.name == "jvm" }) {
         target.mavenPublication {
             artifact(tasks["emptyJavadoc"])
+        }
+    }
+
+    if ((project.properties["multigradle.publishHostExclusivesOnly"] as? String)?.toBoolean() == true) {
+        kotlinMpp.targets.configureEach {
+            mavenPublication {
+                tasks.withType<AbstractPublishToMaven> {
+                    onlyIf {
+                        val mgr = HostManager()
+                        val target = TARGETS_BY_PRESET[publication.name]
+                        target != null && mgr.enabledByHost.filterValues { target in it }.size == 1 && mgr.isEnabled(target)
+                    }
+                }
+            }
         }
     }
 

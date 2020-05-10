@@ -7,15 +7,6 @@
 
 package net.pearx.multigradle.util.platform
 
-import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.LibraryPlugin
-import com.android.build.gradle.tasks.GenerateBuildConfig
-import net.pearx.multigradle.util.alias
-import net.pearx.multigradle.util.kotlinMpp
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.kotlin.dsl.*
-
 val LinuxX64Platform = nativePlatform("linuxX64", true)
 val LinuxArm64Platform = nativePlatform("linuxArm64")
 val LinuxArm32HfpPlatform = nativePlatform("linuxArm32Hfp")
