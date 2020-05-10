@@ -31,6 +31,10 @@ fun NamedDomainObjectContainer<PluginDeclaration>.createMultiGradlePlugin(type: 
     }
 }
 
+allprojects {
+    version = if (devBuildNumber != null) "$projectVersion-dev-$devBuildNumber" else projectVersion
+}
+
 subprojects {
     apply<KotlinDslPlugin>()
     apply<MavenPublishPlugin>()
@@ -38,7 +42,6 @@ subprojects {
     apply<PublishPlugin>()
 
     group = "net.pearx.multigradle"
-    version = if (devBuildNumber != null) "$projectVersion-dev-$devBuildNumber" else projectVersion
     description = projectDescription.replace("%type%", "modular and simple")
 
     repositories {
