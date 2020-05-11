@@ -41,4 +41,4 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - run: ./gradlew --no-daemon publishDevelop -PdevBuildNumber=${{ github.run_number }} -PpearxRepoUsername=${{ secrets.PEARX_REPO_USERNAME }} -PpearxRepoPassword=${{ secrets.PEARX_REPO_PASSWORD }}
+      - run: ./gradlew --no-daemon publishDevelop -PdevBuildNumber=${{ github.run_number }} -PpearxRepoUsername=${{ secrets.S_PEARX_REPO_USERNAME }} -PpearxRepoPassword=${{ secrets.S_PEARX_REPO_PASSWORD }}
