@@ -9,6 +9,7 @@ package net.pearx.multigradle.util.platform
 
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.android.build.gradle.tasks.GenerateBuildConfig
 import net.pearx.multigradle.util.alias
 import net.pearx.multigradle.util.kotlinMpp
@@ -85,8 +86,14 @@ val AndroidPlatform = platform("android", listOf("testReleaseUnitTest", "testDeb
             }
         }
 
+        named("prepareKotlinBuildScriptModel").dependsOn(generateAndroidManifest) // todo hack
+
         withType<GenerateBuildConfig> {
             dependsOn(generateAndroidManifest)
+        }
+
+        afterEvaluate {
+            generateAndroidManifest.get()
         }
     }
 }
