@@ -9,13 +9,16 @@ package net.pearx.multigradle.util.platform
 
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
-import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.android.build.gradle.tasks.GenerateBuildConfig
 import net.pearx.multigradle.util.alias
 import net.pearx.multigradle.util.kotlinMpp
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.gradle.ext.ProjectSettings
+import org.jetbrains.gradle.ext.TaskTriggersConfig
 
 class AndroidPlatformConfig(project: Project) : PlatformConfig(project) {
     var compileSdkVersion: String by project.the<LibraryExtension>().alias(LibraryExtension::getCompileSdkVersion, LibraryExtension::setCompileSdkVersion)
@@ -86,14 +89,16 @@ val AndroidPlatform = platform("android", listOf("testReleaseUnitTest", "testDeb
             }
         }
 
-        named("prepareKotlinBuildScriptModel").dependsOn(generateAndroidManifest) // todo hack
+        configure<IdeaModel> {
+            (project as ExtensionAware).configure<ProjectSettings> {
+                (this as ExtensionAware).configure<TaskTriggersConfig> {
+                    beforeSync(generateAndroidManifest)
+                }
+            }
+        }
 
         withType<GenerateBuildConfig> {
             dependsOn(generateAndroidManifest)
-        }
-
-        afterEvaluate {
-            generateAndroidManifest.get()
         }
     }
 }

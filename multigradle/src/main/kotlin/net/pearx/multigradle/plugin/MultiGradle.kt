@@ -20,6 +20,7 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaPlugin
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.gradle.ext.IdeaExtPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
@@ -46,6 +47,7 @@ private fun Project.preInit() {
     apply<DokkaPlugin>()
     apply<BasePlugin>()
     apply<PublishingPlugin>()
+    apply<IdeaExtPlugin>()
 
     extra.set("kotlin.tests.individualTaskReports", "false") // hack until https://youtrack.jetbrains.com/issue/KT-35202 is fixed
 

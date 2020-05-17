@@ -16,6 +16,7 @@ val kotlinVersion: String by project
 val nodeVersion: String by project
 val dokkaVersion: String by project
 val androidBuildToolsVersion: String by project
+val ideaExtVersion: String by project
 
 val devBuildNumber: String? by project
 val pearxRepoUsername: String? by project
@@ -102,6 +103,7 @@ project(":multigradle") {
         "api"("com.github.node-gradle:gradle-node-plugin:$nodeVersion")
         "api"("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
         "api"("com.android.tools.build:gradle:$androidBuildToolsVersion")
+        "api"("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:$ideaExtVersion")
     }
 
     configure<GradlePluginDevelopmentExtension> {
