@@ -8,6 +8,7 @@
 package net.pearx.multigradle.plugin
 
 import net.pearx.multigradle.util.MultiGradleExtension
+import net.pearx.multigradle.util.asBoolean
 import net.pearx.multigradle.util.configureDokka
 import net.pearx.multigradle.util.kotlinMpp
 import net.pearx.multigradle.util.platform.PLATFORMS
@@ -87,7 +88,7 @@ private fun Project.postInit() {
         }
     }
 
-    if ((project.properties["multigradle.publishHostExclusivesOnly"] as? String)?.toBoolean() == true) {
+    if (project.properties["multigradle.publishHostExclusivesOnly"].asBoolean) {
         kotlinMpp.targets.configureEach {
             mavenPublication {
                 tasks.withType<AbstractPublishToMaven> {

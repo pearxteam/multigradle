@@ -8,7 +8,6 @@
 package net.pearx.multigradle.util.platform
 
 import net.pearx.multigradle.util.MultiGradleExtension
-import net.pearx.multigradle.util.kotlinMpp
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 
@@ -44,12 +43,6 @@ inline fun <T : PlatformConfig> platform(name: String, testTasks: List<String>, 
 
     override fun toString(): String {
         return "Platform($name)"
-    }
-}
-
-fun nativePlatform(name: String, test: Boolean = false) = platform(name, if(test) listOf("${name}Test") else listOf(), { PlatformConfig(it) }) {
-    kotlinMpp {
-        targetFromPreset(presets[name])
     }
 }
 
