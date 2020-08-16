@@ -99,6 +99,7 @@ project(":multigradle") {
     }
 
     dependencies {
+        "implementation"("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
         "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         "api"("com.github.node-gradle:gradle-node-plugin:$nodeVersion")
         "api"("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
