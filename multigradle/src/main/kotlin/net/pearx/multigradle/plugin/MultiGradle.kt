@@ -12,6 +12,8 @@ import net.pearx.multigradle.util.asBoolean
 import net.pearx.multigradle.util.configureDokka
 import net.pearx.multigradle.util.kotlinMpp
 import net.pearx.multigradle.util.platform.PLATFORMS
+import net.pearx.multigradle.util.platform.Platform
+import net.pearx.multigradle.util.platform.PlatformConfig
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
@@ -28,14 +30,38 @@ import org.jetbrains.kotlin.konan.target.presetName
 
 const val MULTIGRADLE_EXTENSION_NAME = "multigradle"
 
-internal fun Project.enabledPlatforms() = (properties["enabledPlatforms"]?.toString()?.split(',')?.toSet()
-    ?: PLATFORMS.keys).map { PLATFORMS[it] ?: throw NoSuchElementException("No such platform '$name'") }
+private fun createPlatformsRegex(platforms: Set<String>) = Regex(buildString {
+    append('^')
+    append("(?:")
+    platforms.forEachIndexed { index, platform ->
+        if (index != 0)
+            append('|')
+        append("""\Q""")
+        for (char in platform) {
+            if (char == '*')
+                append("""\E.+\Q""")
+            else
+                append(char)
+        }
+        append("""\E""")
+    }
+    append(')')
+    append('$')
+})
+
+internal fun Project.enabledPlatforms(): Collection<Platform<out PlatformConfig>> {
+    val platformNames = properties["enabledPlatforms"]?.toString()?.split(',')?.toSet() ?: return PLATFORMS.values
+    val regex = createPlatformsRegex(platformNames)
+    return PLATFORMS.values.filter { regex.matches(it.name) }
+}
 
 internal fun Project.initializeMultiGradle() {
     preInit()
     val ext = MultiGradleExtension(this)
     extensions.add(MULTIGRADLE_EXTENSION_NAME, ext)
-    for (platform in enabledPlatforms()) {
+    val enabledPlatforms = enabledPlatforms()
+    logger.info("Enabled MultiGradle platforms: $enabledPlatforms")
+    for (platform in enabledPlatforms) {
         platform.initialize(this)
         ext.initPlatform(platform)
     }
