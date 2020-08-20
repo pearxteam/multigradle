@@ -13,7 +13,6 @@ val projectVersion: String by project
 val projectDescription: String by project
 val projectChangelog: String by project
 val kotlinVersion: String by project
-val nodeVersion: String by project
 val dokkaVersion: String by project
 val androidBuildToolsVersion: String by project
 val ideaExtVersion: String by project
@@ -101,7 +100,6 @@ project(":multigradle") {
     dependencies {
         "implementation"("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
         "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        "api"("com.github.node-gradle:gradle-node-plugin:$nodeVersion")
         "api"("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
         "api"("com.android.tools.build:gradle:$androidBuildToolsVersion")
         "api"("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:$ideaExtVersion")
