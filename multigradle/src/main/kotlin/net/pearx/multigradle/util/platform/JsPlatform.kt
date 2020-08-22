@@ -17,18 +17,6 @@ class JsPlatformConfig(project: Project) : PlatformConfig(project)
 val JsPlatform = platform("js", listOf("jsTest"), { JsPlatformConfig(it) }) { ext ->
     kotlinMpp {
         js {
-            browser {
-                testTask {
-                    useKarma {
-                        useChromeHeadless()
-                        usePhantomJS()
-                        useFirefoxHeadless()
-                        useOpera()
-                        useSafari()
-                        useIe()
-                    }
-                }
-            }
             nodejs {
                 testTask {
                     useMocha()
