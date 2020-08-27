@@ -8,8 +8,10 @@
 package net.pearx.multigradle.util
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 internal fun Project.configureDokka(dokka: DokkaTask, outputFormat: String, outputName: String, vararg platformList: String) {
     with(dokka) {
@@ -23,4 +25,8 @@ internal fun Project.configureDokka(dokka: DokkaTask, outputFormat: String, outp
             }
         }
     }
+}
+
+internal fun Project.findSourceDirectories(endsWith: String): FileCollection {
+    return files(the<KotlinProjectExtension>().sourceSets.filter { it.name.endsWith(endsWith) }.map { it.kotlin.sourceDirectories }).filter { it.isDirectory }
 }

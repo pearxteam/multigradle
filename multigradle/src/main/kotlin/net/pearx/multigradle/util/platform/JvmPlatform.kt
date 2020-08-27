@@ -16,7 +16,10 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
+import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class JvmPlatformConfig(project: Project) : PlatformConfig(project) {
     lateinit var junitJupiterVersion: String
@@ -73,9 +76,22 @@ val JvmPlatform = platform("jvm", listOf("jvmTest"), { JvmPlatformConfig(it) }) 
     }
 
     tasks {
-        named<Test>("jvmTest") {
-            reports.junitXml.isEnabled = true
+        val jvmTest by existing(Test::class)
+        val jacocoJvmTestReport by registering(JacocoReport::class)
+
+        jacocoJvmTestReport.configure {
+            dependsOn(jvmTest)
+            reports {
+                xml.isEnabled = true
+            }
+            executionData(jvmTest.get().the<JacocoTaskExtension>().destinationFile!!)
+            sourceDirectories.from(findSourceDirectories("Main"))
+            classDirectories.from(tasks.getByName<KotlinCompile>("compileKotlinJvm").destinationDir)
+        }
+        jvmTest.configure {
+            finalizedBy(jacocoJvmTestReport)
             useJUnitPlatform()
+            reports.junitXml.isEnabled = true
         }
     }
 }
