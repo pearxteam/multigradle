@@ -106,7 +106,7 @@ private fun Project.preInit() {
 
 private val TARGETS_BY_PRESET = HostManager().targets.mapKeys { it.value.presetName }
 private fun Project.postInit() {
-    for (target in kotlinMpp.targets {
+    for (target in kotlinMpp.targets) {
         target.mavenPublication {
             artifact(tasks["emptyJavadoc"])
         }
