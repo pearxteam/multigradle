@@ -15,11 +15,13 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class JvmPlatformConfig(project: Project) : PlatformConfig(project) {
@@ -42,7 +44,14 @@ class JvmPlatformConfig(project: Project) : PlatformConfig(project) {
 val JvmPlatform = platform("jvm", listOf("jvmTest"), { JvmPlatformConfig(it) }) { ext ->
     apply<JacocoPlugin>()
 
-    val javadocJar by tasks.getting
+    val dokkaJavadoc by tasks.named<DokkaTask>("javadocJar")
+
+    val javadocJar by tasks.register<Jar>("javadocJar") {
+        dependsOn(dokkaJavadoc)
+        from(dokkaJavadoc.outputDirectory)
+        archiveAppendix.set("jvm")
+        archiveClassifier.set("javadoc")
+    }
 
     kotlinMpp {
         jvm {
