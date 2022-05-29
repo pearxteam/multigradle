@@ -13,13 +13,10 @@ val projectVersion: String by project
 val projectDescription: String by project
 val projectChangelog: String by project
 val kotlinVersion: String by project
-val dokkaVersion: String by project
 val androidBuildToolsVersion: String by project
 val ideaExtVersion: String by project
 
 val devBuildNumber: String? by project
-val pearxRepoUsername: String? by project
-val pearxRepoPassword: String? by project
 val githubAccessToken: String? by project
 
 fun NamedDomainObjectContainer<PluginDeclaration>.createMultiGradlePlugin(type: String, applicableTo: String) {
@@ -45,27 +42,19 @@ subprojects {
     description = projectDescription.replace("%type%", "modular and simple")
 
     repositories {
-        jcenter()
+        mavenCentral()
         gradlePluginPortal()
     }
 
     configure<PublishingExtension> {
         repositories {
-            fun AuthenticationSupported.pearxCredentials() {
+            maven {
                 credentials {
-                    username = pearxRepoUsername
-                    password = pearxRepoPassword
+                    username = "pearxteam"
+                    password = githubAccessToken
                 }
-            }
-            maven {
-                pearxCredentials()
-                name = "develop"
-                url = uri("https://repo.pearx.net/maven2/develop/")
-            }
-            maven {
-                pearxCredentials()
-                name = "release"
-                url = uri("https://repo.pearx.net/maven2/release/")
+                name = "github"
+                url = uri("https://maven.pkg.github.com/pearxteam/multigradle")
             }
         }
     }
@@ -74,20 +63,17 @@ subprojects {
         website = "https://github.com/pearxteam/multigradle"
         vcsUrl = "https://github.com/pearxteam/multigradle"
         tags = listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform")
-        mavenCoordinates {
-            groupId = "net.pearx.multigradle"
-        }
     }
 
     tasks {
         register("publishDevelop") {
             group = "publishing"
-            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == project.the<PublishingExtension>().repositories["develop"] })
+            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == project.the<PublishingExtension>().repositories["github"] })
         }
         register("publishRelease") {
             group = "publishing"
             dependsOn(named("publishPlugins"))
-            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == project.the<PublishingExtension>().repositories["release"] })
+            dependsOn(withType<PublishToMavenRepository>().matching { it.repository == project.the<PublishingExtension>().repositories["github"] })
         }
     }
 }
@@ -100,7 +86,7 @@ project(":multigradle") {
     dependencies {
         "implementation"("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
         "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        "api"("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+        "api"("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
         "api"("com.android.tools.build:gradle:$androidBuildToolsVersion")
         "api"("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:$ideaExtVersion")
     }

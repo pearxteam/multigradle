@@ -9,7 +9,6 @@ package net.pearx.multigradle.plugin
 
 import net.pearx.multigradle.util.MultiGradleExtension
 import net.pearx.multigradle.util.asBoolean
-import net.pearx.multigradle.util.configureDokka
 import net.pearx.multigradle.util.kotlinMpp
 import net.pearx.multigradle.util.platform.PLATFORMS
 import net.pearx.multigradle.util.platform.Platform
@@ -22,7 +21,6 @@ import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaPlugin
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.gradle.ext.IdeaExtPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -79,7 +77,7 @@ private fun Project.preInit() {
     extra.set("kotlin.tests.individualTaskReports", "false") // hack until https://youtrack.jetbrains.com/issue/KT-35202 is fixed
 
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     tasks {
@@ -147,10 +145,6 @@ private fun Project.postInit() {
                     }
                 }
             }
-        }
-
-        named<DokkaTask>("dokka") {
-            configureDokka(this, "html", "html", "Common", "JVM", "JS")
         }
     }
 }

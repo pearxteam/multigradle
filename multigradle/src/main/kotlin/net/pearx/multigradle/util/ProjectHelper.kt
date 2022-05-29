@@ -13,20 +13,6 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
-internal fun Project.configureDokka(dokka: DokkaTask, outputFormat: String, outputName: String, vararg platformList: String) {
-    with(dokka) {
-        this.outputFormat = outputFormat
-        outputDirectory = "$buildDir/dokka/$outputName"
-        multiplatform {
-            for(platform in platformList) {
-                create(platform.toLowerCase()) {
-                    targets = listOf("")
-                }
-            }
-        }
-    }
-}
-
 internal fun Project.findSourceDirectories(endsWith: String): FileCollection {
     return files(the<KotlinProjectExtension>().sourceSets.filter { it.name.endsWith(endsWith) }.map { it.kotlin.sourceDirectories }).filter { it.isDirectory }
 }

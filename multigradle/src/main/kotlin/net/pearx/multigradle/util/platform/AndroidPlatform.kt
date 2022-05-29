@@ -21,8 +21,8 @@ import org.jetbrains.gradle.ext.ProjectSettings
 import org.jetbrains.gradle.ext.TaskTriggersConfig
 
 class AndroidPlatformConfig(project: Project) : PlatformConfig(project) {
-    var compileSdkVersion: String by project.the<LibraryExtension>().alias(LibraryExtension::getCompileSdkVersion, LibraryExtension::setCompileSdkVersion)
-    var buildToolsVersion: String by project.the<LibraryExtension>().alias(LibraryExtension::getBuildToolsVersion, LibraryExtension::setBuildToolsVersion)
+    var compileSdkVersion: String by project.the<LibraryExtension>().alias({ compileSdkVersion!! }, { compileSdkVersion = it })
+    var buildToolsVersion: String by project.the<LibraryExtension>().alias({ buildToolsVersion }, { buildToolsVersion = it })
     lateinit var junitVersion: String
 }
 

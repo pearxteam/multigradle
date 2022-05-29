@@ -7,18 +7,19 @@
 
 package net.pearx.multigradle.util.platform
 
-import net.pearx.multigradle.util.*
+import net.pearx.multigradle.util.alias
+import net.pearx.multigradle.util.findSourceDirectories
+import net.pearx.multigradle.util.invoke
+import net.pearx.multigradle.util.kotlinMpp
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class JvmPlatformConfig(project: Project) : PlatformConfig(project) {
@@ -34,29 +35,21 @@ class JvmPlatformConfig(project: Project) : PlatformConfig(project) {
             project.kotlinMpp.jvm {
                 compilations.configureEach { kotlinOptions.jvmTarget = "1.$value" }
             }
-            project.the<JavaPluginConvention>().sourceCompatibility = JavaVersion.toVersion(value)
+            project.the<JavaPluginExtension>().sourceCompatibility = JavaVersion.toVersion(value)
         }
 }
 
 val JvmPlatform = platform("jvm", listOf("jvmTest"), { JvmPlatformConfig(it) }) { ext ->
     apply<JacocoPlugin>()
 
-    val dokkaJavadoc by tasks.registering(DokkaTask::class) {
-        configureDokka(this, "javadoc", "javadoc", "JVM")
-    }
-    val javadocJar by tasks.registering(Jar::class) {
-        dependsOn(dokkaJavadoc)
-        archiveClassifier.set("javadoc")
-        archiveAppendix.set("jvm")
-        from(dokkaJavadoc.get().outputDirectory)
-    }
+    val javadocJar by tasks.getting
 
     kotlinMpp {
         jvm {
             afterEvaluate {
                 compilations["main"] {
                     mavenPublication {
-                        artifact(javadocJar.get())
+                        artifact(javadocJar)
                     }
                     dependencies {
                         implementation(kotlin("stdlib-jdk${ext().javaVersion}"))
