@@ -41,8 +41,4 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - run: 'echo "$PGP_KEY_PRIVATE" | base64 --decode > "$(pwd)/private.key"'
-        shell: bash
-        env:
-          PGP_KEY_PRIVATE: ${{secrets.PGP_KEY_PRIVATE}}
-      - run: './gradlew --no-daemon publishDevelop -PgithubAccessToken=${{ secrets.GIT_HUB_RELEASE_TOKEN }} -PdevBuildNumber=${{ github.run_number }} -Psigning.keyId=${{ secrets.PGP_KEY_PUBID }} -Psigning.password="${{ secrets.PGP_KEY_PASSWORD }}" -Psigning.secretKeyRingFile="$(pwd)/private.key"'
+      - run: './gradlew --no-daemon publishDevelop -PgithubAccessToken=${{ secrets.GIT_HUB_RELEASE_TOKEN }} -PdevBuildNumber=${{ github.run_number }}
