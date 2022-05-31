@@ -41,4 +41,4 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - run: './gradlew --no-daemon publishDevelop -PgithubAccessToken=${{ secrets.GIT_HUB_RELEASE_TOKEN }} -PdevBuildNumber=${{ github.run_number }} -Psigning.required=false'
+      - run: './gradlew --no-daemon publishDevelop -PgithubAccessToken=${{ secrets.GIT_HUB_RELEASE_TOKEN }} -PdevBuildNumber=${{ github.run_number }}'

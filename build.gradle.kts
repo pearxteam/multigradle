@@ -68,7 +68,9 @@ subprojects {
 
     tasks {
         withType<Sign> {
-            onlyIf { project.the<SigningExtension>().isRequired }
+            onlyIf {
+                devBuildNumber == null
+            }
         }
         register("publishDevelop") {
             group = "publishing"
