@@ -14,7 +14,7 @@ import org.gradle.kotlin.dsl.*
 
 class JsPlatformConfig(project: Project) : PlatformConfig(project)
 
-val JsPlatform = platform("js", listOf("jsTest"), { JsPlatformConfig(it) }) { ext ->
+val JsPlatform = platform("js", listOf("jsTest"), { JsPlatformConfig(it) }) {
     kotlinMpp {
         js {
             nodejs {

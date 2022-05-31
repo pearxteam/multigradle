@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 class JvmPlatformConfig(project: Project) : PlatformConfig(project) {
     lateinit var junitJupiterVersion: String
 
+    @Suppress("unused")
     var jacocoVersion: String by project.the<JacocoPluginExtension>().alias(JacocoPluginExtension::getToolVersion, JacocoPluginExtension::setToolVersion)
 
     private lateinit var _javaVersion: String
@@ -70,16 +71,16 @@ val JvmPlatform = platform("jvm", listOf("jvmTest"), { JvmPlatformConfig(it) }) 
         jacocoJvmTestReport.configure {
             dependsOn(jvmTest)
             reports {
-                xml.isEnabled = true
+                xml.required.set(true)
             }
             executionData(jvmTest.get().the<JacocoTaskExtension>().destinationFile!!)
             sourceDirectories.from(findSourceDirectories("Main"))
-            classDirectories.from(tasks.getByName<KotlinCompile>("compileKotlinJvm").destinationDir)
+            classDirectories.from(tasks.getByName<KotlinCompile>("compileKotlinJvm").destinationDirectory)
         }
         jvmTest.configure {
             finalizedBy(jacocoJvmTestReport)
             useJUnitPlatform()
-            reports.junitXml.isEnabled = true
+            reports.junitXml.required.set(true)
         }
     }
 }

@@ -37,6 +37,7 @@ subprojects {
     apply<MavenPublishPlugin>()
     apply<JavaGradlePluginPlugin>()
     apply<PublishPlugin>()
+    apply<SigningPlugin>()
 
     group = "net.pearx.multigradle"
     description = projectDescription.replace("%type%", "modular and simple")
