@@ -67,6 +67,9 @@ subprojects {
     }
 
     tasks {
+        withType<Sign> {
+            onlyIf { project.the<SigningExtension>().isRequired }
+        }
         register("publishDevelop") {
             group = "publishing"
             dependsOn(withType<PublishToMavenRepository>().matching { it.repository == project.the<PublishingExtension>().repositories["github"] })
