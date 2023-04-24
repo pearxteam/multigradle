@@ -9,27 +9,36 @@ package net.pearx.multigradle.util.platform
 
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
-import com.android.build.gradle.tasks.GenerateBuildConfig
 import net.pearx.multigradle.util.alias
 import net.pearx.multigradle.util.kotlinMpp
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.*
-import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.gradle.ext.ProjectSettings
-import org.jetbrains.gradle.ext.TaskTriggersConfig
 
 class AndroidPlatformConfig(project: Project) : PlatformConfig(project) {
     var compileSdkVersion: String by project.the<LibraryExtension>().alias({ compileSdkVersion!! }, { compileSdkVersion = it })
     var buildToolsVersion: String by project.the<LibraryExtension>().alias({ buildToolsVersion }, { buildToolsVersion = it })
     lateinit var junitVersion: String
+    private lateinit var _javaVersion: String
+    var javaVersion: String
+        get() = _javaVersion
+        set(value) {
+            _javaVersion = value
+            project.the<LibraryExtension>().compileOptions.targetCompatibility("1.$value")
+            project.the<LibraryExtension>().compileOptions.sourceCompatibility("1.$value")
+            project.kotlinMpp.android {
+                compilations.configureEach { kotlinOptions.jvmTarget = "1.$value" }
+            }
+        }
 }
+
+val Project.androidPackageName
+    get() = mutableListOf<String>().also {
+        it += project.group.toString()
+        it += project.name.split('-').drop(1)
+    }.joinToString(".") // todo a bit hacky :(
 
 val AndroidPlatform = platform("android", listOf("testReleaseUnitTest", "testDebugUnitTest"), { AndroidPlatformConfig(it) }) { ext ->
     apply<LibraryPlugin>()
-
-    val manifestPath = file("$buildDir/AndroidManifest.xml")
 
     repositories {
         google()
@@ -43,7 +52,7 @@ val AndroidPlatform = platform("android", listOf("testReleaseUnitTest", "testDeb
                         implementation(kotlin("stdlib"))
                     }
                 }
-                named("androidTest") {
+                named("androidUnitTest") {
                     dependencies {
                         implementation(kotlin("test-annotations-common"))
                         implementation(kotlin("test-junit"))
@@ -58,47 +67,6 @@ val AndroidPlatform = platform("android", listOf("testReleaseUnitTest", "testDeb
     }
 
     configure<LibraryExtension> {
-        defaultConfig {
-
-        }
-        buildTypes.configureEach {
-            sourceSets.configureEach {
-                manifest.srcFile(manifestPath)
-            }
-        }
-    }
-
-
-    tasks {
-        val generateAndroidManifest by registering(Task::class) {
-            with(inputs) {
-                property("group", project.group)
-                property("name", project.name)
-            }
-            outputs.file(manifestPath)
-            doLast {
-                val pkg = mutableListOf<String>().also {
-                    it += project.group.toString()
-                    it += project.name.split('-').drop(1)
-                }.joinToString(".") // todo a bit hacky :(
-                manifestPath.writeText("""
-                <?xml version="1.0" encoding="utf-8"?>
-                <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-                          package="$pkg"/>
-                """.trimIndent())
-            }
-        }
-
-        configure<IdeaModel> {
-            (project as ExtensionAware).configure<ProjectSettings> {
-                (this as ExtensionAware).configure<TaskTriggersConfig> {
-                    beforeSync(generateAndroidManifest)
-                }
-            }
-        }
-
-        withType<GenerateBuildConfig> {
-            dependsOn(generateAndroidManifest)
-        }
+        namespace = project.androidPackageName
     }
 }

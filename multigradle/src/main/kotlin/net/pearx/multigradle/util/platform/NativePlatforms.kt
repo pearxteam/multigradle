@@ -25,23 +25,16 @@ private val nativeSourceSetRelations = mapOf(
 
 val LinuxX64Platform = nativePlatform("linuxX64", "linux", test = true)
 val LinuxArm64Platform = nativePlatform("linuxArm64", "linux")
-val LinuxArm32HfpPlatform = nativePlatform("linuxArm32Hfp", "linux")
-val LinuxMips32Platform = nativePlatform("linuxMips32", "linux")
-val LinuxMipsel32Platform = nativePlatform("linuxMipsel32", "linux")
 val AndroidNativeArm32Platform = nativePlatform("androidNativeArm32", "androidNative")
 val AndroidNativeArm64Platform = nativePlatform("androidNativeArm64", "androidNative")
 val TvOsArm32Platform = nativePlatform("tvosArm64", "tvos")
 val TvOsX64Platform = nativePlatform("tvosX64", "tvos", test = true)
-val IOsArm32Platform = nativePlatform("iosArm32", "ios")
 val IOsArm64Platform = nativePlatform("iosArm64", "ios")
 val IOsX64Platform = nativePlatform("iosX64", "ios", test = true)
 val WatchOsArm32Platform = nativePlatform("watchosArm32", "watchos")
 val WatchOsArm64Platform = nativePlatform("watchosArm64", "watchos")
-val WatchOsX86Platform = nativePlatform("watchosX86", "watchos", test = true)
 val MacOsX64Platform = nativePlatform("macosX64", "macos", test = true)
 val MingwX64Platform = nativePlatform("mingwX64", "mingw", test = true)
-val MingwX86Platform = nativePlatform("mingwX86", "mingw")
-val Wasm32Platform = nativePlatform("wasm32", "wasm")
 
 private fun KotlinMultiplatformExtension.createConfiguration(name: String): KotlinSourceSet {
     return if (ideaActive) { // hack. idea doesn't go well with common native source sets as good as gradle does.

@@ -1,5 +1,5 @@
+
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
-import com.gradle.publish.PluginBundleExtension
 import com.gradle.publish.PublishPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -14,6 +14,7 @@ val projectDescription: String by project
 val projectChangelog: String by project
 val kotlinVersion: String by project
 val androidBuildToolsVersion: String by project
+val dokkaVersion: String by project
 val ideaExtVersion: String by project
 
 val devBuildNumber: String? by project
@@ -25,6 +26,7 @@ fun NamedDomainObjectContainer<PluginDeclaration>.createMultiGradlePlugin(type: 
         displayName = "MultiGradle ${type.capitalize()} [${applicableTo.capitalize()}]"
         description = projectDescription.replace("%type%", type)
         implementationClass = "net.pearx.multigradle.plugin.$type.MultiGradle${type.capitalize()}${applicableTo.capitalize()}"
+        tags.set(listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform"))
     }
 }
 
@@ -60,10 +62,11 @@ subprojects {
         }
     }
 
-    configure<PluginBundleExtension> {
-        website = "https://github.com/pearxteam/multigradle"
-        vcsUrl = "https://github.com/pearxteam/multigradle"
-        tags = listOf("kotlin", "multiplatform", "modular", "kotlin-multiplatform")
+
+
+    configure<GradlePluginDevelopmentExtension> {
+        website.set("https://github.com/pearxteam/multigradle")
+        vcsUrl.set("https://github.com/pearxteam/multigradle")
     }
 
     tasks {
@@ -92,7 +95,7 @@ project(":multigradle") {
     dependencies {
         "implementation"("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
         "api"("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        "api"("org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion")
+        "api"("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
         "api"("com.android.tools.build:gradle:$androidBuildToolsVersion")
         "api"("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:$ideaExtVersion")
     }
