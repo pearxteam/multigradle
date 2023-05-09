@@ -23,7 +23,9 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaPlugin
 import org.jetbrains.gradle.ext.IdeaExtPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
 const val MULTIGRADLE_EXTENSION_NAME = "multigradle"
@@ -105,6 +107,12 @@ private fun Project.preInit() {
 }
 
 private val TARGETS_BY_PRESET = HostManager().targets.mapKeys { it.value.presetName }
+private val ENABLED_BY_FAMILY: Map<Family, Set<KonanTarget>> = mutableMapOf<Family, MutableSet<KonanTarget>>().also {
+    for ((host, targets) in HostManager().enabledByHost.entries) {
+        val s = it.getOrPut(host.family) { mutableSetOf() }
+        s.addAll(targets)
+    }
+}
 private fun Project.postInit() {
     for (target in kotlinMpp.targets) {
         target.mavenPublication {
@@ -119,7 +127,7 @@ private fun Project.postInit() {
                     onlyIf {
                         val mgr = HostManager()
                         val target = TARGETS_BY_PRESET[publication.name]
-                        target != null && mgr.enabledByHost.filterValues { target in it }.size == 1 && mgr.isEnabled(target)
+                        target != null && ENABLED_BY_FAMILY.filterValues { target in it }.size == 1 && mgr.isEnabled(target)
                     }
                 }
             }
